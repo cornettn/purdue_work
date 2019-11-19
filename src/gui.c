@@ -1,21 +1,59 @@
 #include <gtk/gtk.h>
+#include <stdio.h>
 
-static void activate (GTKApplication *app, gpointer user_data) {
-	GtkWidget *window = NULL;
-	window = gtk_application_window_new(app);
-	gtk_window_set_title(GTK_WINDOW(window), "Window");
-	gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
-	gtk_widget_show_all(window);
-}
+int
+main (int   argc,
+      char *argv[])
+{
+  GtkBuilder *builder;
+  GObject *window;
+  GObject *stack;
+  //  GObject *button;
+  GError *error = NULL;
 
-int main (int argc, char **argv) {
-	GtkAplication *app = NULL;
-	int status = 0;
+  gtk_init (&argc, &argv);
 
-	app = gtk_application_new ("lolol", G_APPLICATION_FLAGS_NONE);
-	g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-	status = g_application_run(G_APPLICATION(app), argc, argv);
-	g_object_unref (app);
+  /* Construct a GtkBuilder instance and load our UI description */
+  builder = gtk_builder_new ();
+  if (gtk_builder_add_from_file (builder, "builder.ui", &error) == 0)
+    {
+      printf("probelms!!!!!!!!!!!!!\n");
+      g_printerr ("Error loading file: %s\n", error->message);
+      g_clear_error (&error);
+      return 1;
+    }
 
-	return status;
+
+  /* Connect signal handlers to the constructed widgets. */
+
+  window = gtk_builder_get_object (builder, "window");
+  g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
+
+  printf("1\n");
+
+  stack = gtk_builder_get_object(builder, "tab1");
+  printf("2\n");
+  stack = gtk_builder_get_object(builder, "tab2");
+  printf("3\n");
+  stack = gtk_builder_get_object(builder, "tab3");
+  printf("4\n");
+  stack = gtk_builder_get_object(builder, "tab4");
+  printf("5\n");
+
+//  button = gtk_builder_get_object (builder, "button1");
+//  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+
+//  button = gtk_builder_get_object (builder, "button2");
+//  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+
+//  button = gtk_builder_get_object (builder, "quit");
+//  g_signal_connect (button, "clicked", G_CALLBACK (gtk_main_quit), NULL);
+
+  if (stack) {
+    printf("stack");
+  }
+
+  gtk_main ();
+
+  return 0;
 }
