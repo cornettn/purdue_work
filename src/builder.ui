@@ -183,7 +183,11 @@
             <property name="can_focus">True</property>
             <property name="margin_right">229</property>
             <child>
-              <placeholder/>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">System Page</property>
+              </object>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="system_tab">
@@ -196,7 +200,14 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Processes Page</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="process_tab">
@@ -210,7 +221,14 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Resources Page</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="resources_tab">
@@ -224,7 +242,14 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">File Systems Page</property>
+              </object>
+              <packing>
+                <property name="position">3</property>
+              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="file_system_tab">
