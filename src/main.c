@@ -16,8 +16,8 @@ int main() {
   }
 
 
-  int version = get_disk_storage();
-  
-  printf("\n%d\n\n", version);
-  //free(version);  
+  double version = get_disk_storage();
+
+  printf("\n%f\n\n", version);
+  //free(version);
 }

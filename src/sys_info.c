@@ -6,13 +6,17 @@
 #include <sys/utsname.h>
 #include <string.h>
 #include <sys/statvfs.h>
+#include <mntent.h>
 
-/* Includes ^^^ */ 
+#include "sys_info.h"
+
+/* Includes ^^^ */
 
 
 /* Defines vvv */
 
 #define SMALL_BUF (100)
+#define BYTE_DIVISOR (1024.0)
 
 /* Defines ^^^ */
 
@@ -107,15 +111,41 @@ char *get_CPU_info() {
 
 /* Function for get the amount of space available in the file system, returns -1 on error */
 
-long get_disk_storage() {
-  struct statvfs *stat = NULL;
-  int err = statvfs("/proc", stat);
-  if (err != 0) {
-    perror("get_disk_storage() the statvfs() function returned an error");
+double get_disk_storage() {
+  struct mntent *mnt;
+  FILE * fp = setmntent(_PATH_MOUNTED, "r");
+  struct statvfs disk_amount;
+  if (fp == NULL) {
+    perror("get_disk_storage() file pointer found NULL");
     return -1;
   }
-  printf("Test");
-  return (long)stat->f_bfree;
+  while ((mnt = getmntent(fp)) != NULL) {
+    if (strcmp(mnt->mnt_fsname,"udev") == 0) {
+      if (statvfs(mnt->mnt_dir, &disk_amount) != 0) {
+        perror("get_disk_storage() the statvfs() function returned an error");
+        return -1;
+      }
+      else {
+        double size = (disk_amount.f_bfree) * (disk_amount.f_bsize);
+        size = size / BYTE_DIVISOR / BYTE_DIVISOR / BYTE_DIVISOR;
+        return size;
+      }
+    }
+  }
+  perror("get_disk_storage could not find root");
+  return -1;
+}
+
+
+/* Function for filling the info struct */
+
+void fill_info(sys_info *fill) {
+  fill->OS_version = get_OS_name();
+  fill->kernel_version = get_kernel_version();
+  fill->OS_name = get_OS_name();
+  fill->mem_total = get_mem_total();
+  fill->CPU_info = get_CPU_info();
+  fill->disk_storage = get_disk_storage();
 }
 
 
