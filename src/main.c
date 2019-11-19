@@ -16,8 +16,8 @@ int main() {
   }
 
 
-  char *version = get_OS_version();
-
-  printf("\n%s\n", version);
+  int version = get_disk_storage();
   
+  printf("\n%d\n\n", version);
+  //free(version);  
 }
