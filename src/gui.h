@@ -3,7 +3,6 @@
 
 #include <gtk/gtk.h>
 
-int init_task_manager();
-int link_all_buttons(GtkBuilder *builder);
+int init_task_manager(GtkBuilder *builder);
 
 #endif // GUI_H

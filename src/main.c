@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   /* Initialize the GUI with all the information that should
    * already there i.e System Information, etc */
 
-  if (init_task_manager() < 0) {
+  if (init_task_manager(builder) < 0) {
   	mylog("Error: Could not intialize the GUI");
   	fprintf(stderr, "Error: Initialization of GUI\n");
   }
