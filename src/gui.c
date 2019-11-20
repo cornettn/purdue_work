@@ -4,6 +4,14 @@
 
 GtkBuilder *builder;
 
+
+void link_menu_bar_buttons();
+void link_monitor_buttons();
+void link_edit_buttons();
+void link_view_buttons();
+void link_help_buttons();
+
+
 /*
  * This function is used to initialize the task manager with the
  * appropiate information.
