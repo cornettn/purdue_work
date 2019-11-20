@@ -1,5 +1,7 @@
 #include "gui.h"
 
+#include <stdio.h>
+
 #include "logger.h"
 
 GtkBuilder *builder;
@@ -61,7 +63,7 @@ void link_menu_bar_buttons() {
 
 void link_monitor_buttons() {
   mylog("Link quit button");
-  GObject *quit = gtk_builder_get_object(builder, "monitor-quit-button");
+  GObject *quit = gtk_builder_get_object(builder, "monitor_quit_button");
 	g_signal_connect(quit, "activate", G_CALLBACK(quit_app), NULL);
 }
 
