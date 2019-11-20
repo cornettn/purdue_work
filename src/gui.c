@@ -1,21 +1,12 @@
-#include <gtk/gtk.h>
+#include "gui.h"
 
-int main(int argc, char **argv) {
-  GtkBuilder *builder;
-  GtkWidget *window;
+#include "logger.h"
 
-  gtk_init(&argc, &argv);
+int init_task_manager() {
+  return 1;
+}
 
-  builder = gtk_builder_new();
-  gtk_builder_add_from_file(builder, "builder.ui", NULL);
-
-  window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-  gtk_builder_connect_signals(builder, NULL);
-
-  g_object_unref(builder);
-
-  gtk_widget_show(window);
-  gtk_main();
-
-  return 0;
+int link_all_buttons(GtkBuilder *builder) {
+  builder = NULL;
+  return 1;
 }

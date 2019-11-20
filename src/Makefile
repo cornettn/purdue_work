@@ -1,7 +1,7 @@
 CC = gcc -g -Wall -Werror
 
-all: gui
+all: main
 
-.PHONY: gui
+.PHONY: main
 gui:
-	$(CC) `pkg-config --cflags gtk+-3.0` -o gui gui.c `pkg-config --libs gtk+-3.0`
+	$(CC) `pkg-config --cflags gtk+-3.0` -o main main.c `pkg-config --libs gtk+-3.0`
