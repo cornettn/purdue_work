@@ -8,7 +8,8 @@
 int g_log_fd = -1;
 
 int init_log() {
-	int fd = open("log_messages.log", O_RDWR | O_APPEND | O_CREAT, 0600);
+	int fd = open("log_messages.log", O_RDWR | O_APPEND | O_CREAT | O_TRUNC,
+      0600);
 	if (fd < 0) {
 		perror("Could not open log file");
 		exit(EXIT_FAILURE);
