@@ -22,11 +22,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-missing-image</property>
   </object>
-  <object class="GtkImage">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkTextBuffer" id="file_system_text">
     <property name="text" translatable="yes">Display file system with mounts points</property>
   </object>
@@ -130,12 +125,10 @@ For Each Process:
                           </object>
                         </child>
                         <child>
-                          <object class="GtkImageMenuItem" id="monitor_quit_button">
-                            <property name="label" translatable="yes">Quit</property>
+                          <object class="GtkMenuItem" id="monitor_quit_button">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="image">__glade_unnamed_32</property>
-                            <property name="use_stock">False</property>
+                            <property name="label" translatable="yes">Quit</property>
                           </object>
                         </child>
                       </object>
