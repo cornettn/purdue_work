@@ -2,26 +2,6 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkImage">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkTextBuffer" id="file_system_text">
     <property name="text" translatable="yes">Display file system with mounts points</property>
   </object>
@@ -83,42 +63,6 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-connect</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-open</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-save</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-save-as</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
                           <object class="GtkSeparatorMenuItem">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -145,42 +89,6 @@ For Each Process:
                       <object class="GtkMenu">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-cut</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-copy</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-paste</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-delete</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
                       </object>
                     </child>
                   </object>
@@ -196,30 +104,24 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkImageMenuItem" id="view_all_processes">
+                          <object class="GtkCheckMenuItem" id="view_all_processes">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">All Processes</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="image">__glade_unnamed_22</property>
-                            <property name="use_stock">False</property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkImageMenuItem" id="view_my_processes">
+                          <object class="GtkCheckMenuItem" id="view_my_processes">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">My Processes</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="image">__glade_unnamed_29</property>
-                            <property name="use_stock">False</property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkImageMenuItem" id="view_active_processes">
-                            <property name="label" translatable="yes">Active Processes</property>
+                          <object class="GtkCheckMenuItem" id="view_active_processes">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="image">__glade_unnamed_30</property>
-                            <property name="use_stock">False</property>
+                            <property name="label" translatable="yes">Active Processes</property>
                           </object>
                         </child>
                         <child>
@@ -229,12 +131,10 @@ For Each Process:
                           </object>
                         </child>
                         <child>
-                          <object class="GtkImageMenuItem" id="view_refresh">
-                            <property name="label" translatable="yes">Refresh</property>
+                          <object class="GtkMenuItem" id="view_refresh">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="image">__glade_unnamed_21</property>
-                            <property name="use_stock">False</property>
+                            <property name="label" translatable="yes">Refresh</property>
                           </object>
                         </child>
                       </object>
@@ -252,12 +152,11 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkImageMenuItem">
-                            <property name="label">gtk-about</property>
+                          <object class="GtkMenuItem">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">About</property>
                             <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
                           </object>
                         </child>
                       </object>
