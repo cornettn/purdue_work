@@ -2,6 +2,48 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkTextBuffer" id="file_system_text">
+    <property name="text" translatable="yes">Display file system with mounts points</property>
+  </object>
+  <object class="GtkTextBuffer" id="process_tab_text">
+    <property name="text" translatable="yes">Have a table with options to:
+  - Display all processes
+  - Display current user processes
+  - Display List in Tree Format
+
+For Each Process:
+  - Stop
+  - Kill
+  - Continue
+  - List Memory maps
+  - List Open Files
+  - Click the process to show a detailed view showing:
+      - Process Name
+      - User
+      - State
+      - Memory
+      - Virtual Memory
+      - Resident Memory
+      - Shared Memory
+      - CPU Time
+      - Date time started
+      - Other info we want</property>
+  </object>
+  <object class="GtkTextBuffer" id="resource_tab_text">
+    <property name="text" translatable="yes">Graphs
+  - CPU Usage Graph
+  - Memory and Swap Usage
+  - Network Usage</property>
+  </object>
+  <object class="GtkTextBuffer" id="system_tab_text">
+    <property name="text" translatable="yes">Items to include on this tab:
+  1. OS Release Version
+  2. Kernel Version
+  3. Amount of Memory
+  4. Processor Verison
+  5. Disk Version
+  6. anything else we want</property>
+  </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
     <child>
@@ -31,7 +73,7 @@
                         <property name="can_focus">False</property>
                         <child>
                           <object class="GtkImageMenuItem">
-                            <property name="label">gtk-new</property>
+                            <property name="label">gtk-connect</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="use_underline">True</property>
@@ -72,7 +114,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkImageMenuItem">
+                          <object class="GtkImageMenuItem" id="monitor_quit_button">
                             <property name="label">gtk-quit</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -181,12 +223,47 @@
           <object class="GtkNotebook" id="all_tabs">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="margin_right">229</property>
+            <property name="margin_bottom">100</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkGrid" id="system_tab_grid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">System Page</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Os Picture</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTextView">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="margin_bottom">210</property>
+                    <property name="buffer">system_tab_text</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                    <property name="height">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="stock">gtk-floppy</property>
+                    <property name="icon_size">1</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
               </object>
             </child>
             <child type="tab">
@@ -200,10 +277,29 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkGrid" id="process_tab_grid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Processes Page</property>
+                <child>
+                  <object class="GtkTextView">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="margin_left">33</property>
+                    <property name="margin_bottom">210</property>
+                    <property name="buffer">process_tab_text</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                    <property name="height">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -221,10 +317,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkTextView">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Resources Page</property>
+                <property name="can_focus">True</property>
+                <property name="buffer">resource_tab_text</property>
               </object>
               <packing>
                 <property name="position">2</property>
@@ -242,10 +338,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkTextView">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">File Systems Page</property>
+                <property name="can_focus">True</property>
+                <property name="buffer">file_system_text</property>
               </object>
               <packing>
                 <property name="position">3</property>
