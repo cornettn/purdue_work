@@ -29,9 +29,31 @@
 
 mount **get_mount_list() {
   
+  int mount_count = get_mount_num();
+  mount **list = malloc(sizeof(mount*) * mount_count);
 
+  FILE *fp;
+  struct mntent * mnt;
 
-  return NULL;
+  fp = setmntent(_PATH_MOUNTED, "r");
+
+  for (int x = 0; x < mount_count; x++) {
+    mnt = getmntent(fp);
+    if (mnt == NULL) {
+      break;
+    }
+    list[x] = malloc(sizeof(mount));
+    list[x]->dev_name = get_dev_name(mnt);
+    list[x]->dev_dir = get_dev_dir(mnt);
+    list[x]->dev_type = get_dev_type(mnt);
+    list[x]->dev_total_space = get_dev_total_space(mnt);
+    list[x]->dev_free_space = get_dev_free_space(mnt);
+    list[x]->dev_avail_space = get_dev_avail_space(mnt);
+    list[x]->dev_used_space = get_dev_used_space(mnt);
+    
+  }
+
+  return list;
 }
 
 
@@ -137,9 +159,6 @@ double get_dev_avail_space(struct mntent *mnt) {
 double get_dev_used_space(struct mntent *mnt) {
   return get_dev_total_space(mnt) - get_dev_free_space(mnt);
 }
-
-
-
 
 
 
