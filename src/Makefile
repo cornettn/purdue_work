@@ -1,6 +1,15 @@
-CC=gcc -g -Wall -Werror main.c sys_info.c pid_parser.c -o control
+CC = gcc -g -Wall -Werror
+SRC_C = main.c gui.c logger.c sys_info.c pid_parser.c
+SRC_O = main.o gui.o logger.o sys_info.o pip_parser.o
+EXECUTABLE = main
 
-compile:
-	$(CC)
+all: main
+
+.PHONY: main
+main:
+	$(CC) `pkg-config --cflags gtk+-3.0` -o SRC_C `pkg-config --libs gtk+-3.0`
 
 
+.PHONY: clean
+clean:
+	rm -f main SRC_O
