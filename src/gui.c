@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "logger.h"
+#include "button_linker.h"
 
 GtkBuilder *builder;
 
@@ -17,12 +18,22 @@ GtkCheckMenuItem *my_proc;
 GtkCheckMenuItem *all_proc;
 GtkCheckMenuItem *active_proc;
 
+/*
+ * This function is used to quit to application.
+ */
 
 void quit_app(GtkWidget *widget, gpointer data) {
   mylog("Quitting Application");
+  stop_logging();
   gtk_main_quit();
   exit(1);
-}
+} /* quit_app() */
+
+/*
+ * This function is called whenever the user is adjusting what type of
+ * view they want. i.e. All Processes, My Processes, Active Processes.
+ * This function is reposnsible for changing the gui accordingly.
+ */
 
 void toggle_process_view(GtkWidget *widget, gpointer data) {
   GtkCheckMenuItem *toggle = data;
@@ -49,11 +60,12 @@ void toggle_process_view(GtkWidget *widget, gpointer data) {
       gtk_check_menu_item_set_active(active_proc, FALSE);
     }
   }
-}
+} /* toggle_process_view() */
 
 /*
  * This function is used to initialize the task manager with the
  * appropiate information.
+ * NOTE: This function links all of the buttons together.
  */
 
 int init_task_manager(GtkBuilder *gui_builder) {
@@ -75,7 +87,7 @@ int init_task_manager(GtkBuilder *gui_builder) {
 
 /*
  * This function is used to link all of the buttons in the task manager
- * together.
+ * together as well as link the buttons to their appropiate function.
  */
 
 int link_all_buttons() {
@@ -101,28 +113,39 @@ void link_menu_bar_buttons() {
 	link_help_buttons();
 } /* link_menu_bar_buttons() */
 
+/*
+ * This function is used to link all of the 'Monitor' menu bar buttons.
+ */
+
 void link_monitor_buttons() {
-  mylog("Link quit button");
   GObject *quit = gtk_builder_get_object(builder, "monitor_quit_button");
 	g_signal_connect(quit, "activate", G_CALLBACK(quit_app), NULL);
-}
+} /* link_monitor_buttons() */
+
+/*
+ * This function is used to link all of the 'Edit' menu bar buttons.
+ */
 
 void link_edit_buttons() {
 	return;
-}
+} /* link_edit_buttons() */
+
+/*
+ * This function is used to link of the 'View' menu bar buttons.
+ */
 
 void link_view_buttons() {
   g_signal_connect(G_OBJECT(my_proc), "toggled", G_CALLBACK(toggle_process_view), my_proc);
-
   g_signal_connect(G_OBJECT(all_proc), "toggled", G_CALLBACK(toggle_process_view), all_proc);
-
   g_signal_connect(G_OBJECT(active_proc), "toggled", G_CALLBACK(toggle_process_view), active_proc);
+} /* link_view_buttons() */
 
-  return;
-}
+/*
+ * This function is used to link the 'Help' menu bar buttons.
+ */
 
 void link_help_buttons() {
 	return;
-}
+} /* link_help_buttons() */
 
 
