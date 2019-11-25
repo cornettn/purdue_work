@@ -1,6 +1,7 @@
 #include "gui.h"
 
 #include <stdio.h>
+#include <cairo.h>
 
 #include "logger.h"
 #include "sys_info.h"
@@ -217,8 +218,45 @@ void static init_system_tab() {
  * ##############################################
  */
 
+/*
+ * ##############################################
+ * START RESOURCE TAB FUNCTIONS
+ * ##############################################
+ */
+
+gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
+  guint width = 0;
+  guint height = 0;
+  GtkStyleContext *context;
+  GdkRGBA color;
+
+  context = gtk_widget_get_style_context(widget);
+  width = gtk_widget_get_allocated_width(widget);
+  height = gtk_widget_get_allocated_height(widget);
+
+  gtk_render_background(context, cr, 0, 0, width, height);
+
+  gtk_style_context_get_color(context,
+                              gtk_style_context_get_state (context),
+                              &color);
+
+  gdk_cairo_set_source_rgba(cr, &color);
+
+  cairo_fill(cr);
+
+  return FALSE;
+}
+
+void init_resource_graphs() {
+  GObject *graph = gtk_builder_get_object(builder, "cpu_usage_drawing_area");
+  g_signal_connect(G_OBJECT(graph), "draw", G_CALLBACK(draw_resources), NULL);
+}
 
 
-
+/*
+ * ##############################################
+ * END RESOURCE TAB FUNCTIONS
+ * ##############################################
+ */
 
 
