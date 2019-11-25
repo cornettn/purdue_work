@@ -4,8 +4,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <time.h>
+
+#define BUF_SIZE (1024)
 
 int g_log_fd = -1;
+
 
 int init_log() {
 	int fd = open("log_messages.log", O_RDWR | O_APPEND | O_CREAT | O_TRUNC,
@@ -20,5 +24,18 @@ int init_log() {
 }
 
 void mylog(char *msg) {
-	dprintf(g_log_fd, "%s\n", msg);
+
+	/* Get the timestamp for the logs */
+
+	time_t time = time(NULL);
+	struct tm *local_time = localtime(&time);
+	char *timestamp = (char *) malloc(BUF_SIZE);
+	
+	/* Copy the time into timestamp in format 'MM/DD/YY hh:mm:ss' */
+
+	int size = strftime(str, BUF_SIZE, "%x %X", tm);
+
+	/* Log the message */
+
+	dprintf(g_log_fd, "%s %s\n", timestamp, msg);
 }
