@@ -31,7 +31,7 @@ void mylog(char *msg) {
 	time_t curr_time = time(NULL);
 	struct tm *local_time = localtime(&curr_time);
 	char *timestamp = (char *) malloc(BUF_SIZE);
-	
+
 	/* Copy the time into timestamp in format 'MM/DD/YY hh:mm:ss' */
 
 	int size = strftime(timestamp, BUF_SIZE, "%x %X", local_time);
@@ -39,7 +39,7 @@ void mylog(char *msg) {
 
 	/* Log the message */
 
-	dprintf(g_log_fd, "%s %s\n", timestamp, msg);
+	dprintf(g_log_fd, "%s -- %s\n", timestamp, msg);
 
 	/* Free malloc()'d memory */
 
