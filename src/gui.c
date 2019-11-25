@@ -3,10 +3,9 @@
 #include <stdio.h>
 
 #include "logger.h"
-#include "button_linker.h"
 #include "sys_info.h"
 
-#define BUF_SIZE(1024)
+#define BUF_SIZE (1024)
 
 /* Function Declarations */
 
@@ -37,7 +36,7 @@ GtkCheckMenuItem *active_proc;
 
 void quit_app(GtkWidget *widget, gpointer data) {
   mylog("Quitting Application");
-  stop_logging();  
+  stop_logging();
   g_object_unref(builder);
   gtk_main_quit();
   exit(1);
@@ -200,15 +199,15 @@ void static init_system_tab() {
 
   /* Set labels to correct text */
 
-  gtk_label_set_text(os_type, info.OS_name);
-  gtk_label_set_text(os_verison, info.OS_version);
-  gtk_label_set_text(kernel_version, info.kernel_version);
-  gtk_label_set_text(mem_amount, info.mem_total);
-  gtk_label_set_text(proc_type, info.CPU_info);
-  
-  char disk_storage[1024] = {0}; 
-  sprintf(disk_storage, ".2f", info.disk_storage);
-  gtk_label_set_text(disk_space, disk_storage);
+  gtk_label_set_text(GTK_LABEL(os_type), info.OS_name);
+  gtk_label_set_text(GTK_LABEL(os_verison), info.OS_version);
+  gtk_label_set_text(GTK_LABEL(kernel_version), info.kernel_version);
+  gtk_label_set_text(GTK_LABEL(mem_amount), info.mem_total);
+  gtk_label_set_text(GTK_LABEL(proc_type), info.CPU_info);
+
+  char disk_storage[1024] = {0};
+  sprintf(disk_storage, "%.2f", info.disk_storage);
+  gtk_label_set_text(GTK_LABEL(disk_space), disk_storage);
 
 }
 
