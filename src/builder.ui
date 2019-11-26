@@ -583,6 +583,20 @@
       </object>
     </child>
   </object>
+  <object class="GtkPopoverMenu" id="process_options">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">asdijasdlasd
+</property>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+      </packing>
+    </child>
+  </object>
   <object class="GtkTextBuffer" id="process_tab_text">
     <property name="text" translatable="yes">Have a table with options to:
   - Display all processes
