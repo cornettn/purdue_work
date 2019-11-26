@@ -6,7 +6,9 @@
 
 #include "logger.h"
 #include "sys_info.h"
+#include "pid_parser.h"
 
+#define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
 #define PROCESS_PAGE_NUM (1)
 
@@ -182,10 +184,15 @@ void static link_help_buttons() {
  * ##############################################
  */
 
+/*
+ * This function is used grey out the process views depending on the page
+ * selected.
+ */
+
 void process_view_visibility(GtkNotebook *widget, GtkWidget *page, guint page_num,
                              gpointer data) {
-  mylog("Tab Switch");
-  //int view = *((int *) data);
+
+  /* Grey out the process views if not on process page */
 
   if ( page_num == PROCESS_PAGE_NUM ) {
     gtk_widget_set_sensitive(GTK_WIDGET(my_proc), TRUE);
@@ -197,38 +204,27 @@ void process_view_visibility(GtkNotebook *widget, GtkWidget *page, guint page_nu
   gtk_widget_set_sensitive(GTK_WIDGET(my_proc), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(all_proc), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(active_proc), FALSE);
-}
+} /* process_view_visibiliyu() */
+
+/*
+ * This function is used to link all of tabs to specific functions.
+ */
 
 void static link_tabs() {
   mylog("Linking Tabs");
+
+  /* Initialize the views to be greyed out */
 
   gtk_widget_set_sensitive(GTK_WIDGET(my_proc), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(all_proc), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(active_proc), FALSE);
 
+  /* Link the page switches */
+
   GObject *all_tabs = gtk_builder_get_object(builder, "all_tabs");
-  //GObject *sys_tab = gtk_builder_get_object(builder, "system_tab");
-  //GObject *proc_tab = gtk_builder_get_object(builder, "process_tab");
-  //GObject *resource_tab = gtk_builder_get_object(builder, "process_tab");
-  //GObject *file_tab = gtk_builder_get_object(builder, "process_tab");
-
-
   g_signal_connect(G_OBJECT(all_tabs), "switch-page",
                    G_CALLBACK(process_view_visibility), NULL);
-/*
-  int on = 1;
-  int off = 0;
-
-  g_signal_connect(G_OBJECT(sys_tab), "button-press-event",
-                   G_CALLBACK(process_view_visibility), (void *) &off);
-  g_signal_connect(G_OBJECT(proc_tab), "button-press-event",
-                   G_CALLBACK(process_view_visibility), (void *) &on);
-  g_signal_connect(G_OBJECT(resource_tab), "button-press-event",
-                   G_CALLBACK(process_view_visibility), (void *) &off);
-  g_signal_connect(G_OBJECT(file_tab), "button-press-event",
-                   G_CALLBACK(process_view_visibility), (void *) &off);
-*/
-}
+} /* link_tabs() */
 
 
 /*
@@ -287,8 +283,69 @@ void static init_system_tab() {
 
 /*
  * ##############################################
+ * START PROCESSES TAB FUNCTIONS
+ * ##############################################
+ */
+
+void display_procs(process_t **procs) {
+
+  /* Retrieve the tree model */
+
+  GObject *tree_view = gtk_builder_get_object(builder, "process_tree_view");
+  UNUSED(tree_view);
+  //GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
+
+  /* Format tree view into 5 columns:
+   * Process Name, pid, Status, CPU %, Memory */
+
+  gint num_cols = 5;
+  GType types[] = { G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING,
+                    G_TYPE_STRING, G_TYPE_STRING };
+  GtkTreeStore *tree_store = gtk_tree_store_newv(num_cols, types);
+  UNUSED(tree_store);
+  /* Add the processes from proc in the tree model */
+
+  GtkTreeIter iter = {0};
+  UNUSED(iter);
+
+  /* Set the tree model to the tree view */
+
+}
+
+process_t **get_all_process() {
+  /* This function is a placeholder */
+  return NULL;
+}
+
+
+void init_process_view() {
+
+  /* Initialize view to see all processes */
+
+  gtk_check_menu_item_set_active(all_proc, TRUE);
+
+  // TODO Get all of the processes from the pid_parser
+
+  process_t **procs = get_all_process();
+  display_procs(procs);
+
+
+}
+
+/*
+ * ##############################################
+ * END PROCESSES TAB FUNCTIONS
+ * ##############################################
+ */
+
+/*
+ * ##############################################
  * START RESOURCE TAB FUNCTIONS
  * ##############################################
+ */
+
+/*
+ * Thus function is used to draw the graphs on the resource tab.
  */
 
 gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
@@ -320,12 +377,16 @@ gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
   cairo_fill(cr);
 
   return FALSE;
-}
+} /* draw_resources() */
+
+/*
+ * This function is used to initialize the resource graphs.
+ */
 
 void static init_resource_graphs() {
   GObject *graph = gtk_builder_get_object(builder, "cpu_usage_drawing_area");
   g_signal_connect(G_OBJECT(graph), "draw", G_CALLBACK(draw_resources), NULL);
-}
+} /* init_resource_graphs() */
 
 
 /*
@@ -335,3 +396,16 @@ void static init_resource_graphs() {
  */
 
 
+/*
+ * ##############################################
+ * START FILE SYSTEMS TAB FUNCTIONS
+ * ##############################################
+ */
+
+
+
+/*
+ * ##############################################
+ * END FILE SYSTEMS TAB FUNCTIONS
+ * ##############################################
+ */
