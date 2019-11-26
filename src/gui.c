@@ -179,11 +179,33 @@ void static link_help_buttons() {
  * ##############################################
  */
 
+void process_view_visibility(GtkWidget *widget, GdkEvent *event,
+                             gpointer data) {
+  mylog("Tab Switch");
+  int view = (int) data;
+
+  if (view) {
+    gtk_widget_set_sensitive(my_proc, TRUE);
+    gtk_widget_set_sensitive(all_proc, TRUE);
+    gtk_widget_set_sensitive(active_proc, TRUE);
+    return;
+  }
+
+  gtk_widget_set_sensitive(my_proc, FALSE);
+  gtk_widget_set_sensitive(all_proc, FALSE);
+  gtk_widget_set_sensitive(active_proc, FALSE);
+}
+
 void link_tabs() {
   GObject *sys_tab = gtk_builder_get_object(builder, "system_tab");
   GObject *proc_tab = gtk_builder_get_object(builder, "process_tab");
   GObject *resource_tab = gtk_builder_get_object(builder, "process_tab");
   GObject *file_tab = gtk_builder_get_object(builder, "process_tab");
+
+  g_signal_connect(G_OBJECT(sys_tab), "button-press-event", G_CALLBACK(process_view_visibility), 0);
+  g_signal_connect(G_OBJECT(proc_tab), "button-press-event", G_CALLBACK(process_view_visibility), 1);
+  g_signal_connect(G_OBJECT(resource_tab), "button-press-event", G_CALLBACK(process_view_visibility), 0);
+  g_signal_connect(G_OBJECT(file_tab), "button-press-event", G_CALLBACK(process_view_visibility), 0);
 }
 
 /*
