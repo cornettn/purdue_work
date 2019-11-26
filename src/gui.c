@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <cairo.h>
+#include <slope.h>
 
 #include "logger.h"
 #include "sys_info.h"
@@ -17,6 +18,7 @@ void static link_edit_buttons();
 void static link_view_buttons();
 void static link_help_buttons();
 void static init_system_tab();
+void static init_resource_graphs();
 
 /* Global Variables */
 
@@ -112,6 +114,7 @@ int static link_all_buttons() {
 
   link_menu_bar_buttons();
   init_system_tab();
+  init_resource_graphs();
 
   return 1;
 } /* link_all_buttons() */
@@ -122,7 +125,7 @@ int static link_all_buttons() {
  */
 
 void static link_menu_bar_buttons() {
-	link_monitor_buttons();
+  link_monitor_buttons();
 	link_edit_buttons();
 	link_view_buttons();
 	link_help_buttons();
@@ -167,6 +170,25 @@ void static link_help_buttons() {
 /*
  * ##############################################
  * END MENU BAR FUNCTIONS
+ * ##############################################
+ */
+
+/*
+ * ##############################################
+ * START ALL TAB FUNCTIONS
+ * ##############################################
+ */
+
+void link_tabs() {
+  GObject *sys_tab = gtk_builder_get_object(builder, "system_tab");
+  GObject *proc_tab = gtk_builder_get_object(builder, "process_tab");
+  GObject *resource_tab = gtk_builder_get_object(builder, "process_tab");
+  GObject *file_tab = gtk_builder_get_object(builder, "process_tab");
+}
+
+/*
+ * ##############################################
+ * END ALL TAB FUNCTIONS
  * ##############################################
  */
 
@@ -225,29 +247,37 @@ void static init_system_tab() {
  */
 
 gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
-  guint width = 0;
-  guint height = 0;
-  GtkStyleContext *context;
-  GdkRGBA color;
+  mylog("Drawing Resource Graph");
 
-  context = gtk_widget_get_style_context(widget);
-  width = gtk_widget_get_allocated_width(widget);
-  height = gtk_widget_get_allocated_height(widget);
+  //guint width = 0;
+  //guint height = 0;
+  //GtkStyleContext *context;
+  //GdkRGBA color;
 
-  gtk_render_background(context, cr, 0, 0, width, height);
+  //context = gtk_widget_get_style_context(widget);
+  //width = gtk_widget_get_allocated_width(widget);
+  //height = gtk_widget_get_allocated_height(widget);
 
-  gtk_style_context_get_color(context,
-                              gtk_style_context_get_state (context),
-                              &color);
+  //gtk_render_background(context, cr, 0, 0, width, height);
 
-  gdk_cairo_set_source_rgba(cr, &color);
+  cairo_set_source_rgb(cr, 0.6, 0.6, 0.6);
+  cairo_set_line_width(cr, 1);
+  cairo_rectangle(cr, 180, 20, 80, 80);
+  cairo_stroke_preserve(cr);
+  cairo_fill(cr);
+
+  //gtk_style_context_get_color(context,
+  //                            gtk_style_context_get_state (context),
+  //                            &color);
+
+//  gdk_cairo_set_source_rgba(cr, &color);
 
   cairo_fill(cr);
 
   return FALSE;
 }
 
-void init_resource_graphs() {
+void static init_resource_graphs() {
   GObject *graph = gtk_builder_get_object(builder, "cpu_usage_drawing_area");
   g_signal_connect(G_OBJECT(graph), "draw", G_CALLBACK(draw_resources), NULL);
 }
