@@ -5,30 +5,6 @@
   <object class="GtkTextBuffer" id="file_system_text">
     <property name="text" translatable="yes">Display file system with mounts points</property>
   </object>
-  <object class="GtkTextBuffer" id="process_tab_text">
-    <property name="text" translatable="yes">Have a table with options to:
-  - Display all processes
-  - Display current user processes
-  - Display List in Tree Format
-
-For Each Process:
-  - Stop
-  - Kill
-  - Continue
-  - List Memory maps
-  - List Open Files
-  - Click the process to show a detailed view showing:
-      - Process Name
-      - User
-      - State
-      - Memory
-      - Virtual Memory
-      - Resident Memory
-      - Shared Memory
-      - CPU Time
-      - Date time started
-      - Other info we want</property>
-  </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
     <child>
@@ -480,11 +456,12 @@ For Each Process:
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkTextView">
+                  <object class="GtkTreeView" id="process_tree_view">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="margin_left">33</property>
-                    <property name="buffer">process_tab_text</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -531,7 +508,7 @@ For Each Process:
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
+                    <property name="vexpand">False</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -575,6 +552,28 @@ For Each Process:
                 <property name="tab_fill">False</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkButton" id="test_button">
+                <property name="label" translatable="yes">button</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="no_trees">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">No Trees</property>
+              </object>
+              <packing>
+                <property name="position">4</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -583,6 +582,30 @@ For Each Process:
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkTextBuffer" id="process_tab_text">
+    <property name="text" translatable="yes">Have a table with options to:
+  - Display all processes
+  - Display current user processes
+  - Display List in Tree Format
+
+For Each Process:
+  - Stop
+  - Kill
+  - Continue
+  - List Memory maps
+  - List Open Files
+  - Click the process to show a detailed view showing:
+      - Process Name
+      - User
+      - State
+      - Memory
+      - Virtual Memory
+      - Resident Memory
+      - Shared Memory
+      - CPU Time
+      - Date time started
+      - Other info we want</property>
   </object>
   <object class="GtkTextBuffer" id="resource_tab_text">
     <property name="text" translatable="yes">Graphs
