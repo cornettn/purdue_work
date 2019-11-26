@@ -2,12 +2,13 @@
 
 #include <stdio.h>
 #include <cairo.h>
-#include <slope.h>
+//#include <slope.h>
 
 #include "logger.h"
 #include "sys_info.h"
 
 #define BUF_SIZE (1024)
+#define PROCESS_PAGE_NUM (1)
 
 /* Function Declarations */
 
@@ -19,6 +20,7 @@ void static link_view_buttons();
 void static link_help_buttons();
 void static init_system_tab();
 void static init_resource_graphs();
+void static link_tabs();
 
 /* Global Variables */
 
@@ -113,6 +115,7 @@ int static link_all_buttons() {
   g_signal_connect(main_window, "destroy", G_CALLBACK(quit_app), NULL);
 
   link_menu_bar_buttons();
+  link_tabs();
   init_system_tab();
   init_resource_graphs();
 
@@ -179,34 +182,54 @@ void static link_help_buttons() {
  * ##############################################
  */
 
-void process_view_visibility(GtkWidget *widget, GdkEvent *event,
+void process_view_visibility(GtkNotebook *widget, GtkWidget *page, guint page_num,
                              gpointer data) {
   mylog("Tab Switch");
-  int view = (int) data;
+  //int view = *((int *) data);
 
-  if (view) {
-    gtk_widget_set_sensitive(my_proc, TRUE);
-    gtk_widget_set_sensitive(all_proc, TRUE);
-    gtk_widget_set_sensitive(active_proc, TRUE);
+  if ( page_num == PROCESS_PAGE_NUM ) {
+    gtk_widget_set_sensitive(GTK_WIDGET(my_proc), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(all_proc), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(active_proc), TRUE);
     return;
   }
 
-  gtk_widget_set_sensitive(my_proc, FALSE);
-  gtk_widget_set_sensitive(all_proc, FALSE);
-  gtk_widget_set_sensitive(active_proc, FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(my_proc), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_proc), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(active_proc), FALSE);
 }
 
-void link_tabs() {
-  GObject *sys_tab = gtk_builder_get_object(builder, "system_tab");
-  GObject *proc_tab = gtk_builder_get_object(builder, "process_tab");
-  GObject *resource_tab = gtk_builder_get_object(builder, "process_tab");
-  GObject *file_tab = gtk_builder_get_object(builder, "process_tab");
+void static link_tabs() {
+  mylog("Linking Tabs");
 
-  g_signal_connect(G_OBJECT(sys_tab), "button-press-event", G_CALLBACK(process_view_visibility), 0);
-  g_signal_connect(G_OBJECT(proc_tab), "button-press-event", G_CALLBACK(process_view_visibility), 1);
-  g_signal_connect(G_OBJECT(resource_tab), "button-press-event", G_CALLBACK(process_view_visibility), 0);
-  g_signal_connect(G_OBJECT(file_tab), "button-press-event", G_CALLBACK(process_view_visibility), 0);
+  gtk_widget_set_sensitive(GTK_WIDGET(my_proc), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_proc), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(active_proc), FALSE);
+
+  GObject *all_tabs = gtk_builder_get_object(builder, "all_tabs");
+  //GObject *sys_tab = gtk_builder_get_object(builder, "system_tab");
+  //GObject *proc_tab = gtk_builder_get_object(builder, "process_tab");
+  //GObject *resource_tab = gtk_builder_get_object(builder, "process_tab");
+  //GObject *file_tab = gtk_builder_get_object(builder, "process_tab");
+
+
+  g_signal_connect(G_OBJECT(all_tabs), "switch-page",
+                   G_CALLBACK(process_view_visibility), NULL);
+/*
+  int on = 1;
+  int off = 0;
+
+  g_signal_connect(G_OBJECT(sys_tab), "button-press-event",
+                   G_CALLBACK(process_view_visibility), (void *) &off);
+  g_signal_connect(G_OBJECT(proc_tab), "button-press-event",
+                   G_CALLBACK(process_view_visibility), (void *) &on);
+  g_signal_connect(G_OBJECT(resource_tab), "button-press-event",
+                   G_CALLBACK(process_view_visibility), (void *) &off);
+  g_signal_connect(G_OBJECT(file_tab), "button-press-event",
+                   G_CALLBACK(process_view_visibility), (void *) &off);
+*/
 }
+
 
 /*
  * ##############################################

@@ -8,7 +8,7 @@ all: main
 
 .PHONY: main
 main:
-	$(CC) $(GTK_PACKAGE) -lslope -lm $(SRC_C) -o $(EXECUTABLE) $(GTK_PACKAGE)
+	$(CC) $(GTK_PACKAGE) $(SRC_C) -o $(EXECUTABLE) $(GTK_PACKAGE)
 
 
 .PHONY: clean
