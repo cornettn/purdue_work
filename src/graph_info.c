@@ -38,10 +38,15 @@ cpu_hist *get_cur_cpu() {
 }
 
 
-ms_hist *get_memswap() {
-  ms_hist *cur = NULL;
+/* Function returns current memory and swap status in a struct */
 
-  // ... Fill
+ms_hist *get_memswap() {
+  ms_hist *cur = malloc(sizeof(ms_hist));
+
+  cur->mem_use = get_mem_use();
+  cur->mem_total = get_mem_total();
+  cur->swap_use = get_swap_use();
+  cur->swap_total = get_swap_total();
 
   return cur;
 }
@@ -112,6 +117,14 @@ double get_swap_total() {
 
 
 double get_recieving() {
+  
+  FILE *fp = fopen("/proc/net/dev", "r");
+
+  if (fp == NULL) {
+    return -1;
+  }
+
+  
   return 0;
 }
 
