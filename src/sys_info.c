@@ -123,16 +123,19 @@ double get_disk_storage() {
     if (strcmp(mnt->mnt_fsname,"udev") == 0) {
       if (statvfs(mnt->mnt_dir, &disk_amount) != 0) {
         perror("get_disk_storage() the statvfs() function returned an error");
+        endmntent(fp);
         return -1;
       }
       else {
         double size = (disk_amount.f_bfree) * (disk_amount.f_bsize);
         size = size / BYTE_DIVISOR / BYTE_DIVISOR / BYTE_DIVISOR;
+        endmntent(fp);
         return size;
       }
     }
   }
   perror("get_disk_storage could not find root");
+  endmntent(fp);
   return -1;
 }
 
