@@ -42,9 +42,9 @@ int main() {
 
   //double version = get_dev_total_space(mnt);
 
-  mount **list = get_mount_list();
+  //mount **list = get_mount_list();
 
-  print_mounts(list);
+  //print_mounts(list);
 
   //printf("\n%f\n\n", version);
   //free(version);
