@@ -22,6 +22,7 @@ void static link_view_buttons();
 void static link_help_buttons();
 void static init_system_tab();
 void static init_resource_graphs();
+void static link_test();
 void static link_tabs();
 
 /* Global Variables */
@@ -118,6 +119,7 @@ int static link_all_buttons() {
 
   link_menu_bar_buttons();
   link_tabs();
+  link_test();
   init_system_tab();
   init_resource_graphs();
 
@@ -287,6 +289,15 @@ void static init_system_tab() {
  * ##############################################
  */
 
+void show_process_options() {
+  mylog("show process options");
+  GObject *popup = gtk_builder_get_object(builder, "process_options");
+  gtk_popover_popup(GTK_POPOVER(popup));
+  gtk_widget_show_all(GTK_WIDGET(popup));
+  mylog("Should be popupped");
+
+}
+
 void display_procs(process_t **procs) {
 
   /* Retrieve the tree model */
@@ -312,11 +323,16 @@ void display_procs(process_t **procs) {
 
 }
 
+//PLACEHOLDER
 process_t **get_all_process() {
   /* This function is a placeholder */
   return NULL;
 }
 
+void static link_test() {
+  GObject *button = gtk_builder_get_object(builder, "test_button");
+  g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(show_process_options), NULL);
+}
 
 void init_process_view() {
 
