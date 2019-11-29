@@ -418,7 +418,14 @@ void static init_resource_graphs() {
  * ##############################################
  */
 
+void static init_file_systems() {
+  mount **mounts = get_mount_list();
+  if (mounts == NULL) {
+    mylog("Error Getting mount list");
+    return;
+  }
 
+}
 
 /*
  * ##############################################

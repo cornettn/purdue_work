@@ -2,8 +2,45 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkTextBuffer" id="file_system_text">
-    <property name="text" translatable="yes">Display file system with mounts points</property>
+  <object class="GtkListStore" id="file_system_list_store">
+    <columns>
+      <!-- column-name Device -->
+      <column type="gchararray"/>
+      <!-- column-name Directory -->
+      <column type="gchararray"/>
+      <!-- column-name Type -->
+      <column type="gchararray"/>
+      <!-- column-name Total -->
+      <column type="gdouble"/>
+      <!-- column-name Free -->
+      <column type="gdouble"/>
+      <!-- column-name Avail -->
+      <column type="gdouble"/>
+      <!-- column-name Unused -->
+      <column type="gdouble"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Test
+</col>
+        <col id="1" translatable="yes">Test
+</col>
+        <col id="2" translatable="yes">Test</col>
+        <col id="3">200</col>
+        <col id="4">200</col>
+        <col id="5">200</col>
+        <col id="6">300</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes"/>
+        <col id="1" translatable="yes"/>
+        <col id="2" translatable="yes"/>
+        <col id="3">0</col>
+        <col id="4">0</col>
+        <col id="5">0</col>
+        <col id="6">0</col>
+      </row>
+    </data>
   </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
@@ -532,10 +569,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTextView">
+              <object class="GtkTreeView" id="file_system_tree">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="buffer">file_system_text</property>
+                <property name="model">file_system_list_store</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
               </object>
               <packing>
                 <property name="position">3</property>
@@ -583,6 +623,9 @@
       </object>
     </child>
   </object>
+  <object class="GtkTextBuffer" id="file_system_text">
+    <property name="text" translatable="yes">Display file system with mounts points</property>
+  </object>
   <object class="GtkPopoverMenu" id="process_options">
     <property name="can_focus">False</property>
     <child>
@@ -594,6 +637,7 @@
       </object>
       <packing>
         <property name="submenu">main</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </object>
