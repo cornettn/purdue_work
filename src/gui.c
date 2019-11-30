@@ -429,8 +429,31 @@ void static init_file_systems() {
     return;
   }
 
-  GObject *file_system = gtk_builder_get_object(builder, "file_system_tree");
-  UNUSED(file_system);
+  /* Get references for Tree View */
+
+  GObject *file_system_tree_view =
+    gtk_builder_get_object(builder, "file_system_tree");
+
+  GtkTreeModel *model =
+    gtk_tree_view_get_model(GTK_TREE_VIEW(file_system_tree_view));
+
+  /* Get the tree path of the first row */
+
+  GtkTreePath *tree_path = gtk_tree_path_new_first();
+
+  /* Get the tree iterator and tree store to edit rows */
+
+  GtkTreeIter iter = {0};
+  gtk_tree_model_get_iter(model, &iter, tree_path);
+
+  GObject *list_store =
+    gtk_builder_get_object(builder, "file_system_list_store");
+
+  /* Edit Columns 0, 1, 2 */
+
+  gtk_list_store_set_value(list_store, &iter, 0, "Test0");
+  gtk_list_store_set_value(list_store, &iter, 1, "Test1");
+  gtk_list_store_set_value(list_store, &iter, 2, "Test2");
 
 }
 
