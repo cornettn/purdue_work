@@ -6,8 +6,8 @@
 int get_cpu_num();
 double *get_cpu_use_list();
 
-double get_mem_use();
-double get_mem_total();
+double get_graph_info_mem_use();
+double get_graph_info_mem_total();
 double get_swap_use();
 double get_swap_total();
 
@@ -34,10 +34,10 @@ typedef struct net_hist {
   double total_recieved;
   double sending;
   double total_sent;
-}net_hist;  
+}net_hist;
 
 cpu_hist *get_cur_cpu();
 ms_hist *get_memswap();
 net_hist *get_net();
 
-#endif 
+#endif

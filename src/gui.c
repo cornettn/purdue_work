@@ -2,12 +2,13 @@
 
 #include <stdio.h>
 #include <cairo.h>
-//#include <slope.h>
 
 #include "logger.h"
 #include "sys_info.h"
 #include "pid_parser.h"
-#include "slope/slope.h"
+#include "graph_info.h"
+#include "file_system.h"
+//#include "slope/slope.h"
 
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
@@ -23,6 +24,7 @@ void static link_view_buttons();
 void static link_help_buttons();
 void static init_system_tab();
 void static init_resource_graphs();
+void static init_file_systems();
 void static link_test();
 void static link_tabs();
 
@@ -123,6 +125,7 @@ int static link_all_buttons() {
   link_test();
   init_system_tab();
   init_resource_graphs();
+  init_file_systems();
 
   return 1;
 } /* link_all_buttons() */
@@ -425,6 +428,9 @@ void static init_file_systems() {
     mylog("Error Getting mount list");
     return;
   }
+
+  GObject *file_system = gtk_builder_get_object(builder, "file_system_tree");
+  UNUSED(file_system);
 
 }
 
