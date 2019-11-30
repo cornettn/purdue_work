@@ -2,6 +2,8 @@
 #ifndef FILE_SYSTEM_H
 #define FILE_SYSTEM_H
 
+#include <mntent.h>
+
 char *get_dev_name(struct mntent *);
 char *get_dev_dir(struct mntent *);
 char *get_dev_type(struct mntent *);
@@ -23,4 +25,4 @@ typedef struct mount {
 mount **get_mount_list();
 int get_mount_num();
 
-#endif 
+#endif

@@ -43,8 +43,8 @@ cpu_hist *get_cur_cpu() {
 ms_hist *get_memswap() {
   ms_hist *cur = malloc(sizeof(ms_hist));
 
-  cur->mem_use = get_mem_use();
-  cur->mem_total = get_mem_total();
+  cur->mem_use = get_graph_info_mem_use();
+  cur->mem_total = get_graph_info_mem_total();
   cur->swap_use = get_swap_use();
   cur->swap_total = get_swap_total();
 
@@ -64,7 +64,7 @@ net_hist *get_net() {
 /*
  * Min reqs for Tab 3:
  *   - CPU Usage for each thread/core
- *   - Memory and Swap Usage 
+ *   - Memory and Swap Usage
  *   - Network Usage (Send/Recieve)
  */
 
@@ -73,7 +73,7 @@ int get_cpu_num() {
   return get_nprocs_conf();
 }
 
-double *get_cpu_use_list() { 
+double *get_cpu_use_list() {
   double * temp = NULL;
 
   return temp;
@@ -81,7 +81,7 @@ double *get_cpu_use_list() {
 
 
 
-double get_mem_use() {
+double get_graph_info_mem_use() {
   struct sysinfo *mem = NULL;
   if (sysinfo(mem) == -1) {
     perror("get_mem_use() sysinfo returned an error");
@@ -92,7 +92,8 @@ double get_mem_use() {
   return total - free;
 }
 
-double get_mem_total() {
+double get_graph_info_mem_total() {
+//#include <slope.h>
   struct sysinfo *mem = NULL;
   sysinfo(mem);
   double total = mem->totalram;
@@ -102,7 +103,7 @@ double get_mem_total() {
 double get_swap_use() {
   struct sysinfo *mem = NULL;
   sysinfo(mem);
-  double total = mem->totalswap; 
+  double total = mem->totalswap;
   double free = mem->freeswap;
   return total - free;
 }
@@ -110,14 +111,14 @@ double get_swap_use() {
 double get_swap_total() {
   struct sysinfo *mem = NULL;
   sysinfo(mem);
-  double total = mem->totalswap; 
+  double total = mem->totalswap;
   return total;
 }
 
 
 
 double get_recieving() {
-  
+
   FILE *fp = fopen("/proc/net/dev", "r");
 
   if (fp == NULL) {
@@ -126,7 +127,6 @@ double get_recieving() {
   }
 
 
-  
   return 0;
 }
 
