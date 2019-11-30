@@ -7,6 +7,7 @@
 #include "logger.h"
 #include "sys_info.h"
 #include "pid_parser.h"
+#include "slope/slope.h"
 
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)

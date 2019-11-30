@@ -32,13 +32,13 @@
         <col id="6">300</col>
       </row>
       <row>
-        <col id="0" translatable="yes"/>
-        <col id="1" translatable="yes"/>
-        <col id="2" translatable="yes"/>
-        <col id="3">0</col>
-        <col id="4">0</col>
-        <col id="5">0</col>
-        <col id="6">0</col>
+        <col id="0" translatable="yes">Test1</col>
+        <col id="1" translatable="yes">Test1</col>
+        <col id="2" translatable="yes">Test1</col>
+        <col id="3">100</col>
+        <col id="4">100</col>
+        <col id="5">100</col>
+        <col id="6">100</col>
       </row>
     </data>
   </object>
@@ -573,6 +573,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="model">file_system_list_store</property>
+                <property name="enable_grid_lines">horizontal</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
