@@ -121,8 +121,10 @@ double get_recieving() {
   FILE *fp = fopen("/proc/net/dev", "r");
 
   if (fp == NULL) {
+    perror("proc file could  not be opened in get_recieving()");
     return -1;
   }
+
 
   
   return 0;
