@@ -19,34 +19,69 @@
       <!-- column-name Unused -->
       <column type="gdouble"/>
     </columns>
+  </object>
+  <object class="GtkTextBuffer" id="file_system_text">
+    <property name="text" translatable="yes">Display file system with mounts points</property>
+  </object>
+  <object class="GtkPopoverMenu" id="process_options">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">asdijasdlasd
+</property>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkTextBuffer" id="process_tab_text">
+    <property name="text" translatable="yes">Have a table with options to:
+  - Display all processes
+  - Display current user processes
+  - Display List in Tree Format
+
+For Each Process:
+  - Stop
+  - Kill
+  - Continue
+  - List Memory maps
+  - List Open Files
+  - Click the process to show a detailed view showing:
+      - Process Name
+      - User
+      - State
+      - Memory
+      - Virtual Memory
+      - Resident Memory
+      - Shared Memory
+      - CPU Time
+      - Date time started
+      - Other info we want</property>
+  </object>
+  <object class="GtkListStore" id="processes_list_store">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name status -->
+      <column type="gchararray"/>
+      <!-- column-name cpu -->
+      <column type="gchararray"/>
+      <!-- column-name pid -->
+      <column type="gchararray"/>
+      <!-- column-name memory -->
+      <column type="gchararray"/>
+    </columns>
     <data>
       <row>
-        <col id="0"/>
-        <col id="1" translatable="yes">Test
-</col>
-        <col id="2" translatable="yes">Test</col>
-        <col id="3">200</col>
-        <col id="4">200</col>
-        <col id="5">200</col>
-        <col id="6">300</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Test1</col>
-        <col id="1" translatable="yes">Test1</col>
-        <col id="2" translatable="yes">Test1</col>
-        <col id="3">100</col>
-        <col id="4">100</col>
-        <col id="5">100</col>
-        <col id="6">100</col>
-      </row>
-      <row>
-        <col id="0" context="Test" comments="Test">Test</col>
-        <col id="1" translatable="yes"/>
-        <col id="2" translatable="yes"/>
-        <col id="3">100</col>
-        <col id="4">0</col>
-        <col id="5">0</col>
-        <col id="6">0</col>
+        <col id="0" translatable="yes">Test Proc</col>
+        <col id="1" translatable="yes">Test Proc</col>
+        <col id="2" translatable="yes">Test Proc</col>
+        <col id="3" translatable="yes">Test Proc</col>
+        <col id="4" translatable="yes">Test Proc</col>
       </row>
     </data>
   </object>
@@ -195,7 +230,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="margin_right">70</property>
-            <property name="margin_bottom">100</property>
+            <property name="margin_bottom">98</property>
             <child>
               <object class="GtkGrid" id="system_tab_grid">
                 <property name="visible">True</property>
@@ -497,21 +532,68 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid" id="process_tab_grid">
+              <object class="GtkTreeView" id="processes_tree_view">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
+                <property name="model">processes_list_store</property>
+                <property name="enable_grid_lines">horizontal</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
                 <child>
-                  <object class="GtkTreeView" id="process_tree_view">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection"/>
+                  <object class="GtkTreeViewColumn" id="name_col">
+                    <property name="title" translatable="yes">Name</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
                     </child>
                   </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="status_col">
+                    <property name="title" translatable="yes">Status</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="cpu_col">
+                    <property name="title" translatable="yes">% CPU</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">2</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="pid_col">
+                    <property name="title" translatable="yes">ID</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">3</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="mem_col">
+                    <property name="title" translatable="yes">Memory</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">4</attribute>
+                      </attributes>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -586,7 +668,7 @@
                   <object class="GtkTreeSelection"/>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="device_col">
                     <property name="title" translatable="yes">Device</property>
                     <property name="clickable">True</property>
                     <child>
@@ -598,7 +680,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="directory_col">
                     <property name="title" translatable="yes">Directory</property>
                     <child>
                       <object class="GtkCellRendererText"/>
@@ -609,7 +691,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="type_col">
                     <property name="title" translatable="yes">Type</property>
                     <child>
                       <object class="GtkCellRendererText"/>
@@ -620,7 +702,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="total_col">
                     <property name="title" translatable="yes">Total</property>
                     <child>
                       <object class="GtkCellRendererText"/>
@@ -631,7 +713,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="free_col">
                     <property name="title" translatable="yes">Free</property>
                     <child>
                       <object class="GtkCellRendererText"/>
@@ -642,7 +724,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="avail_col">
                     <property name="title" translatable="yes">Avail</property>
                     <child>
                       <object class="GtkCellRendererText"/>
@@ -653,7 +735,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
+                  <object class="GtkTreeViewColumn" id="unused_col">
                     <property name="title" translatable="yes">Unused</property>
                     <child>
                       <object class="GtkCellRendererText"/>
@@ -687,48 +769,6 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkTextBuffer" id="file_system_text">
-    <property name="text" translatable="yes">Display file system with mounts points</property>
-  </object>
-  <object class="GtkPopoverMenu" id="process_options">
-    <property name="can_focus">False</property>
-    <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">asdijasdlasd
-</property>
-      </object>
-      <packing>
-        <property name="submenu">main</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkTextBuffer" id="process_tab_text">
-    <property name="text" translatable="yes">Have a table with options to:
-  - Display all processes
-  - Display current user processes
-  - Display List in Tree Format
-
-For Each Process:
-  - Stop
-  - Kill
-  - Continue
-  - List Memory maps
-  - List Open Files
-  - Click the process to show a detailed view showing:
-      - Process Name
-      - User
-      - State
-      - Memory
-      - Virtual Memory
-      - Resident Memory
-      - Shared Memory
-      - CPU Time
-      - Date time started
-      - Other info we want</property>
   </object>
   <object class="GtkTextBuffer" id="resource_tab_text">
     <property name="text" translatable="yes">Graphs
