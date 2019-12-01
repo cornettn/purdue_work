@@ -293,6 +293,11 @@ void static init_system_tab() {
  * ##############################################
  */
 
+/*
+ * This function will display the options for processes when a user right
+ * clicks a process.
+ */
+
 void show_process_options() {
   mylog("show process options");
   GObject *popup = gtk_builder_get_object(builder, "process_options");
@@ -300,43 +305,111 @@ void show_process_options() {
   gtk_widget_show_all(GTK_WIDGET(popup));
   mylog("Should be popupped");
 
-}
+} /* show_process_options() */
+
+/*
+ * This function is used to append a row to end of the list store.
+ */
+
+void static add_row_to_processes(GtkListStore *list_store,
+                                 GtkTreeIter *iter,
+                                 process_t *proc) {
+  /* Enum for the different columns in the tree view */
+
+  enum {NAME, STATUS, CPU, ID, MEM};
+  gint cols[] = {NAME, STATUS, CPU, ID, MEM};
+
+  /* Initialize GValues */
+
+  GValue name = G_VALUE_INIT;
+  GValue status = G_VALUE_INIT;
+  GValue cpu = G_VALUE_INIT;
+  GValue pid = G_VALUE_INIT;
+  GValue mem = G_VALUE_INIT;
+
+  /* Cast GValues to appropiate type */
+
+  g_value_init(&name, G_TYPE_STRING);
+  g_value_init(&status, G_TYPE_STRING);
+  g_value_init(&cpu, G_TYPE_STRING);
+  g_value_init(&pid, G_TYPE_STRING);
+  g_value_init(&mem, G_TYPE_STRING);
+
+  /* Set the values according to proc */
+
+  g_value_set_static_string(&name, proc->proc_name);
+  g_value_set_static_string(&status, proc->state);
+  g_value_set_static_string(&cpu, proc->cpu_time);
+  g_value_set_static_string(&pid, proc->pid);
+  g_value_set_static_string(&mem, proc->memory);
+
+  GValues vals[] = {name, status, cpu, pid, mem};
+
+  /* Append the row with the values to the list store */
+
+  gtk_list_store_append(list_store, iter);
+  gtk_list_store_set_valuesv(list_store, iter, cols, vals, 5);
+
+} /* add_row_to_processes() */
+
+/*
+ * This function is used to display the processes.
+ */
 
 void display_procs(process_t **procs) {
+  
+  /* Get references for tree view */
 
-  /* Retrieve the tree model */
+  GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
+  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
 
-  GObject *tree_view = gtk_builder_get_object(builder, "process_tree_view");
-  UNUSED(tree_view);
-  //GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
+  /* Get the tree path of the first row */
 
-  /* Format tree view into 5 columns:
-   * Process Name, pid, Status, CPU %, Memory */
+  GtkTreePath *tree_path = gtk_tree_path_new_first();
 
-  gint num_cols = 5;
-  GType types[] = { G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING,
-                    G_TYPE_STRING, G_TYPE_STRING };
-  GtkTreeStore *tree_store = gtk_tree_store_newv(num_cols, types);
-  UNUSED(tree_store);
-  /* Add the processes from proc in the tree model */
+  /* Create Tree iterator */
 
   GtkTreeIter iter = {0};
-  UNUSED(iter);
+  gtk_tree_model_get_iter(model, &iter, tree_path);
 
-  /* Set the tree model to the tree view */
+  GtkListStore *list_store =
+    GTK_LIST_STORE(gtk_builder_get_object(builder, "processes_list_store"));
 
-}
+  /* Add processes to tree view */
+
+  int counter = 0;
+  process_t *curr_proc = procs[counter];
+  while (curr_proc != NULL) {
+    add_row_to_processes(list_store, &iter, curr_proc);
+    curr_proc = procs[++counter];
+  }
+} /* display_processes() */
+
 
 //PLACEHOLDER
 process_t **get_all_process() {
   /* This function is a placeholder */
-  return NULL;
+  
+  process_t proc = {0};
+  proc.pid = "pid";
+  proc.proc_name = "name";
+  proc.sate = "state";
+  proc.memory "mem";
+  proc.cpu_time = "cpu_time";
+
+  process_t procs[] = {proc};
+  return &procs;
 }
 
+//temp function used for testing
 void static link_test() {
   GObject *button = gtk_builder_get_object(builder, "test_button");
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(show_process_options), NULL);
 }
+
+/*
+ * This function is used to initialize the process tab. 
+ */
 
 void init_process_view() {
 
@@ -349,8 +422,7 @@ void init_process_view() {
   process_t **procs = get_all_process();
   display_procs(procs);
 
-
-}
+} /* init_process_view() */
 
 /*
  * ##############################################
