@@ -75,15 +75,6 @@ For Each Process:
       <!-- column-name memory -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Test Proc</col>
-        <col id="1" translatable="yes">Test Proc</col>
-        <col id="2" translatable="yes">Test Proc</col>
-        <col id="3" translatable="yes">Test Proc</col>
-        <col id="4" translatable="yes">Test Proc</col>
-      </row>
-    </data>
   </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
@@ -229,8 +220,8 @@ For Each Process:
           <object class="GtkNotebook" id="all_tabs">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="margin_right">70</property>
-            <property name="margin_bottom">98</property>
+            <property name="margin_right">12</property>
+            <property name="margin_bottom">289</property>
             <child>
               <object class="GtkGrid" id="system_tab_grid">
                 <property name="visible">True</property>
@@ -242,6 +233,7 @@ For Each Process:
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
+                    <property name="margin_right">57</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">5</property>
                     <child>
@@ -635,11 +627,65 @@ For Each Process:
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">False</property>
+                    <property name="vexpand">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkDrawingArea" id="memory_and_swap_drawing_area">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkDrawingArea" id="network_history_drawing_area">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Memory and Swap History</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Al Bayan Bold 16"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Network History</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Al Bayan Bold 16"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
               </object>
