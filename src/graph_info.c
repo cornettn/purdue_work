@@ -137,13 +137,14 @@ double recieve_help() {
   double temp = 0;
   char *test = malloc(sizeof(char) * SMALL_BUF);
 
-  fscanf(fp, "[^\n]\n");
-  fscanf(fp, "[^\n]\n");
-  while (fscanf(fp, "\t%s:\t%lf", test, &temp) != EOF) { 
-    if (strstr(test, "eth") == 0) {
+  fscanf(fp, "%*[^\n]\n");
+  fscanf(fp, "%*[^\n]\n");
+  while (fscanf(fp, "%s:", test) != EOF) {
+    if (strstr(test, "eth") != NULL) {
+      fscanf(fp, "\t%lf", &temp);
       rec += temp;
     }
-    fscanf(fp, "[^\n]\n");
+    fscanf(fp, "%*[^\n]\n");
   }
 
   free(test);
@@ -186,16 +187,16 @@ double send_help() {
   double temp = 0;
   char *test = malloc(sizeof(char) * SMALL_BUF);
 
-  fscanf(fp, "[^\n]\n");
-  fscanf(fp, "[^\n]\n");
-  while (fscanf(fp, "\t%s:", test) != EOF) { 
-    if (strstr(test, "eth") == 0) {
+  fscanf(fp, "%*[^\n]\n");
+  fscanf(fp, "%*[^\n]\n");
+  while (fscanf(fp, "%s:", test) != EOF) {
+    if (strstr(test, "eth") != NULL) {
       for (int x = 0; x < 9; x++) {
         fscanf(fp, "\t%lf", &temp);
       }
       rec += temp;
     }
-    fscanf(fp, "[^\n]");
+    fscanf(fp, "%*[^\n]");
   }
 
   free(test);
