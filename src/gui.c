@@ -422,6 +422,18 @@ void static init_resource_graphs() {
  * ##############################################
  */
 
+void static add_row_to_file_system(GtkListStore *list_store, 
+                                   GtkTreeIter *iter
+                                   mount *mount) {
+  gtk_list_store_insert_with_values(list_store, &iter,
+    0, mount->dev_name,
+    1, mount->dev_dir,
+    2, mount->dev_type,
+    3, mount->dev_total_space,
+    4, mount->dev_avail_sapce,
+    5, mount->used_space, -1);
+}
+
 void static init_file_systems() {
   mount **mounts = get_mount_list();
   if (mounts == NULL) {
@@ -449,7 +461,8 @@ void static init_file_systems() {
   GtkListStore *list_store =
     GTK_LIST_STORE(gtk_builder_get_object(builder, "file_system_list_store"));
 
-  /* Edit Columns 0, 1, 2 */
+  // Example of how to use GValue
+  /*
 
   GValue val = G_VALUE_INIT;
   g_value_init(&val, G_TYPE_STRING);
@@ -462,7 +475,17 @@ void static init_file_systems() {
 
   g_value_set_static_string(&val, "Test2");
   gtk_list_store_set_value(list_store, &iter, 2, &val);
+  
+  */
 
+  /* Add all of the mounts to the list store */
+
+  int counter = 0;
+  mount *curr_mount = mounts[counter];
+  while(curr_mount != NULL) {
+    add_row_to_file_system(list_store, &iter, curr_mount)
+    curr_mount = mounts[++counter]
+  }
 }
 
 /*
