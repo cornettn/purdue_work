@@ -8,7 +8,7 @@
 #include "pid_parser.h"
 #include "graph_info.h"
 #include "file_system.h"
-//#include "slope/slope.h"
+#include "slope/slope.h"
 
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
