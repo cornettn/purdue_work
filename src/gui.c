@@ -450,6 +450,79 @@ gfloat f (gfloat x) {
   return 0.03 * pow(x, 3);
 }
 
+/*
+ * This function is used to draw the cpu history graph. This
+ * function is called whenever the "draw" action is emitted by the drawing
+ * area.
+ */
+
+gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
+                             gpointer user_data) {
+  /* GtkDrawingArea size */
+
+  GdkRectangle da;
+
+  /* Pixels between each point */
+
+  gdouble dx = 5.0, dy = 5.0;
+  gdouble i, clip_x1 = 0.0, clip_y1 = 0.0, clip_x2 = 0.0, clip_y2 = 0.0;
+  GdkWindow *window = gtk_widget_get_window(widget);
+
+  /* Determine GtkDrawingArea dimensions */
+
+  gdk_window_get_geometry (window,
+            &da.x,
+            &da.y,
+            &da.width,
+            &da.height);
+
+  /* Draw on a white background */
+
+  cairo_set_source_rgb (cr, 255,255, 255);
+  cairo_paint (cr);
+
+  /* Change the transformation matrix */
+
+  cairo_translate (cr, da.width / 2, da.height / 2);
+  cairo_scale (cr, ZOOM_X, -ZOOM_Y);
+
+  /* Determine the data points to calculate (ie. those in the clipping zone */
+
+  cairo_device_to_user_distance (cr, &dx, &dy);
+  cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
+  cairo_set_line_width (cr, dx);
+
+  /* Draws x and y axis */
+
+  cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+  cairo_move_to (cr, clip_x1, clip_y1);
+  cairo_line_to (cr, clip_x2, clip_y1);
+  cairo_move_to (cr, clip_x1, clip_y1);
+  cairo_line_to (cr, clip_x1, clip_y2);
+  cairo_stroke (cr);
+
+  /* Get data points */
+
+  /* Link each data point */
+
+  for (i = clip_x1; i < clip_x2; i += dx)
+      cairo_line_to (cr, i, f (i));
+
+
+  /* Draw the curve */
+
+  cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
+  cairo_stroke (cr);
+
+  return FALSE;
+} /* draw_cpu() */
+
+/*
+ * This function is used to draw the memory and swap history graph. This
+ * function is called whenever the "draw" action is emitted by the drawing
+ * area.
+ */
+
 gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
                              gpointer user_data) {
 
@@ -459,6 +532,7 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   GdkWindow *window = gtk_widget_get_window(widget);
 
   /* Determine GtkDrawingArea dimensions */
+
   gdk_window_get_geometry (window,
             &da.x,
             &da.y,
@@ -466,19 +540,23 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
             &da.height);
 
   /* Draw on a white background */
+
   cairo_set_source_rgb (cr, 255,255, 255);
   cairo_paint (cr);
 
   /* Change the transformation matrix */
+
   cairo_translate (cr, da.width / 2, da.height / 2);
   cairo_scale (cr, ZOOM_X, -ZOOM_Y);
 
   /* Determine the data points to calculate (ie. those in the clipping zone */
+
   cairo_device_to_user_distance (cr, &dx, &dy);
   cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
   cairo_set_line_width (cr, dx);
 
   /* Draws x and y axis */
+
   cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
   cairo_move_to (cr, clip_x1, clip_y1);
   cairo_line_to (cr, clip_x2, clip_y1);
@@ -487,38 +565,99 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   cairo_stroke (cr);
 
   /* Get data points */
-  ms_hist *data = get_memswap();
+//  ms_hist *data = get_memswap();
 
   /* Link each data point */
+
   for (i = clip_x1; i < clip_x2; i += dx)
       cairo_line_to (cr, i, f (i));
 
+//  UNUSED(data);
+
   /* Draw the curve */
+
   cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
   cairo_stroke (cr);
 
   return FALSE;
-}
+} /* draw_memory_swap() */
 
 /*
- * Thus function is used to draw the graphs on the resource tab.
+ * This function is sued to draw the network history graph. This function
+ * is called whenever the "draw" action is emitted by the drawing area.
  */
 
-gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
-  mylog("Drawing Resource Graph");
+gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
+                             gpointer user_data) {
 
-  draw_memory_swap(widget, cr, data);
+  GdkRectangle da;            /* GtkDrawingArea size */
+  gdouble dx = 5.0, dy = 5.0; /* Pixels between each point */
+  gdouble i, clip_x1 = 0.0, clip_y1 = 0.0, clip_x2 = 0.0, clip_y2 = 0.0;
+  GdkWindow *window = gtk_widget_get_window(widget);
+
+  /* Determine GtkDrawingArea dimensions */
+
+  gdk_window_get_geometry (window,
+            &da.x,
+            &da.y,
+            &da.width,
+            &da.height);
+
+  /* Draw on a white background */
+
+  cairo_set_source_rgb (cr, 255,255, 255);
+  cairo_paint (cr);
+
+  /* Change the transformation matrix */
+
+  cairo_translate (cr, da.width / 2, da.height / 2);
+  cairo_scale (cr, ZOOM_X, -ZOOM_Y);
+
+  /* Determine the data points to calculate (ie. those in the clipping zone */
+
+  cairo_device_to_user_distance (cr, &dx, &dy);
+  cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
+  cairo_set_line_width (cr, dx);
+
+  /* Draws x and y axis */
+
+  cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+  cairo_move_to (cr, clip_x1, clip_y1);
+  cairo_line_to (cr, clip_x2, clip_y1);
+  cairo_move_to (cr, clip_x1, clip_y1);
+  cairo_line_to (cr, clip_x1, clip_y2);
+  cairo_stroke (cr);
+
+  /* Get data points */
+//  ms_hist *data = get_memswap();
+
+  /* Link each data point */
+
+  for (i = clip_x1; i < clip_x2; i += dx)
+      cairo_line_to (cr, i, f (i));
+
+//  UNUSED(data);
+
+  /* Draw the curve */
+
+  cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
+  cairo_stroke (cr);
 
   return FALSE;
-} /* draw_resources() */
+} /* draw_net() */
 
 /*
  * This function is used to initialize the resource graphs.
  */
 
 void static init_resource_graphs() {
-  GObject *graph = gtk_builder_get_object(builder, "memory_and_swap_drawing_area");
-  g_signal_connect(G_OBJECT(graph), "draw", G_CALLBACK(draw_resources), NULL);
+  GObject *mem_swap_graph = gtk_builder_get_object(builder, "memory_and_swap_drawing_area");
+  GObject *cpu_graph = gtk_builder_get_object(builder, "cpu_usage_drawing_area");
+  GObject *net_graph = gtk_builder_get_object(builder, "network_history_drawing_area");
+
+  g_signal_connect(G_OBJECT(mem_swap_graph), "draw", G_CALLBACK(draw_memory_swap), NULL);
+  g_signal_connect(G_OBJECT(cpu_graph), "draw", G_CALLBACK(draw_cpu), NULL);
+  g_signal_connect(G_OBJECT(net_graph), "draw", G_CALLBACK(draw_net), NULL);
 } /* init_resource_graphs() */
 
 
