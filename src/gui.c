@@ -23,6 +23,7 @@ void static link_edit_buttons();
 void static link_view_buttons();
 void static link_help_buttons();
 void static init_system_tab();
+void static init_process_view();
 void static init_resource_graphs();
 void static init_file_systems();
 void static link_test();
@@ -124,6 +125,7 @@ int static link_all_buttons() {
   link_tabs();
   link_test();
   init_system_tab();
+  init_process_view();
   init_resource_graphs();
   init_file_systems();
 
@@ -343,7 +345,7 @@ void static add_row_to_processes(GtkListStore *list_store,
   g_value_set_static_string(&pid, proc->pid);
   g_value_set_static_string(&mem, proc->memory);
 
-  GValues vals[] = {name, status, cpu, pid, mem};
+  GValue vals[] = {name, status, cpu, pid, mem};
 
   /* Append the row with the values to the list store */
 
@@ -357,7 +359,7 @@ void static add_row_to_processes(GtkListStore *list_store,
  */
 
 void display_procs(process_t **procs) {
-  
+
   /* Get references for tree view */
 
   GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
@@ -389,16 +391,18 @@ void display_procs(process_t **procs) {
 //PLACEHOLDER
 process_t **get_all_process() {
   /* This function is a placeholder */
-  
-  process_t proc = {0};
-  proc.pid = "pid";
-  proc.proc_name = "name";
-  proc.sate = "state";
-  proc.memory "mem";
-  proc.cpu_time = "cpu_time";
 
-  process_t procs[] = {proc};
-  return &procs;
+  process_t *proc = (process_t *) malloc(sizeof(process_t));
+  proc->pid = "pid";
+  proc->proc_name = "name";
+  proc->state = "state";
+  proc->memory = "mem";
+  proc->cpu_time = "cpu_time";
+
+  process_t **procs = (process_t **) malloc(2 * sizeof(process_t *));
+  procs[0] = proc;
+  procs[1] = NULL;
+  return procs;
 }
 
 //temp function used for testing
@@ -408,10 +412,10 @@ void static link_test() {
 }
 
 /*
- * This function is used to initialize the process tab. 
+ * This function is used to initialize the process tab.
  */
 
-void init_process_view() {
+void static init_process_view() {
 
   /* Initialize view to see all processes */
 
