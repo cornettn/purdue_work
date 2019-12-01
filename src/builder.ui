@@ -220,14 +220,17 @@ For Each Process:
           <object class="GtkNotebook" id="all_tabs">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="margin_right">12</property>
+            <property name="margin_right">44</property>
             <property name="margin_bottom">289</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <child>
               <object class="GtkGrid" id="system_tab_grid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
+                <property name="margin_right">174</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
                 <child>
                   <object class="GtkBox" id="system_info">
                     <property name="visible">True</property>
@@ -527,6 +530,8 @@ For Each Process:
               <object class="GtkTreeView" id="processes_tree_view">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
                 <property name="model">processes_list_store</property>
                 <property name="enable_grid_lines">horizontal</property>
                 <child internal-child="selection">
@@ -607,6 +612,8 @@ For Each Process:
               <object class="GtkGrid" id="resources_tab_grid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
                 <child>
                   <object class="GtkLabel" id="cpu_usage_label">
                     <property name="visible">True</property>
@@ -708,6 +715,8 @@ For Each Process:
               <object class="GtkTreeView" id="file_system_tree">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
                 <property name="model">file_system_list_store</property>
                 <property name="enable_grid_lines">horizontal</property>
                 <child internal-child="selection">
