@@ -15,6 +15,7 @@
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
 #define PROCESS_PAGE_NUM (1)
+#define RIGHT_CLICK (3)
 
 /* Function Declarations */
 
@@ -28,7 +29,6 @@ void static init_system_tab();
 void static init_process_view();
 void static init_resource_graphs();
 void static init_file_systems();
-void static link_test();
 void static link_tabs();
 
 /* Global Variables */
@@ -125,7 +125,6 @@ int static link_all_buttons() {
 
   link_menu_bar_buttons();
   link_tabs();
-  link_test();
   init_system_tab();
   init_process_view();
   init_resource_graphs();
@@ -297,19 +296,41 @@ void static init_system_tab() {
  * ##############################################
  */
 
+
+
 /*
  * This function will display the options for processes when a user right
  * clicks a process.
  */
 
-void show_process_options() {
-  mylog("show process options");
-  GObject *popup = gtk_builder_get_object(builder, "process_options");
-  gtk_popover_popup(GTK_POPOVER(popup));
-  gtk_widget_show_all(GTK_WIDGET(popup));
-  mylog("Should be popupped");
-
+void show_process_options(GtkTreeView *tree_view,
+                          GtkTreePath *path,
+                          GtkTreeViewColumn *column,
+                          gpointer user_data) {
+  GtkMenu *menu = GTK_MENU(gtk_builder_get_object(builder,
+            "proc_options"));
+  gtk_menu_popup_at_pointer(menu, NULL);
 } /* show_process_options() */
+
+
+void mouse_click(GtkWidget *widget,
+                   GdkEvent *event,
+                   gpointer user_data) {
+  if (event->type == GDK_BUTTON_PRESS &&
+      ((GdkEventButton *) event)->button == RIGHT_CLICK) {
+
+    gint x = (gint) ((GdkEventButton *) event)->x;
+    gint y = (gint) ((GdkEventButton *) event)->y;
+
+    GtkTreePath **path = malloc(sizeof(char *));
+
+
+    gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
+                                  x, y, path, NULL, NULL, NULL);
+    show_process_options(GTK_TREE_VIEW(widget),
+                         *path, NULL, NULL);
+  }
+}
 
 /*
  * This function is used to append a row to end of the list store.
@@ -407,12 +428,6 @@ process_t **get_all_process() {
   return procs;
 }
 
-//temp function used for testing
-void static link_test() {
-  GObject *button = gtk_builder_get_object(builder, "test_button");
-  g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(show_process_options), NULL);
-}
-
 /*
  * This function is used to initialize the process tab.
  */
@@ -427,6 +442,13 @@ void static init_process_view() {
 
   process_t **procs = get_all_process();
   display_procs(procs);
+
+
+  GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
+  g_signal_connect(G_OBJECT(tree_view), "button-press-event",
+      G_CALLBACK(mouse_click), NULL);
+  g_signal_connect(G_OBJECT(tree_view), "row-activated",
+      G_CALLBACK(show_process_options), NULL);
 
 } /* init_process_view() */
 
