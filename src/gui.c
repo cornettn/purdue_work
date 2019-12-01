@@ -446,14 +446,22 @@ void static init_file_systems() {
   GtkTreeIter iter = {0};
   gtk_tree_model_get_iter(model, &iter, tree_path);
 
-  GObject *list_store =
-    gtk_builder_get_object(builder, "file_system_list_store");
+  GtkListStore *list_store =
+    GTK_LIST_STORE(gtk_builder_get_object(builder, "file_system_list_store"));
 
   /* Edit Columns 0, 1, 2 */
 
-  gtk_list_store_set_value(list_store, &iter, 0, "Test0");
-  gtk_list_store_set_value(list_store, &iter, 1, "Test1");
-  gtk_list_store_set_value(list_store, &iter, 2, "Test2");
+  GValue val = G_VALUE_INIT;
+  g_value_init(&val, G_TYPE_STRING);
+
+  g_value_set_static_string(&val, "Test0");
+  gtk_list_store_set_value(list_store, &iter, 0, &val);
+
+  g_value_set_static_string(&val, "Test1");
+  gtk_list_store_set_value(list_store, &iter, 1, &val);
+
+  g_value_set_static_string(&val, "Test2");
+  gtk_list_store_set_value(list_store, &iter, 2, &val);
 
 }
 
