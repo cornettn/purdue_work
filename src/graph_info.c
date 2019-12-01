@@ -88,36 +88,35 @@ double *get_cpu_use_list() {
 
 
 double get_graph_info_mem_use() {
-  struct sysinfo *mem = NULL;
-  if (sysinfo(mem) == -1) {
+  struct sysinfo mem;
+  if (sysinfo(&mem) == -1) {
     perror("get_mem_use() sysinfo returned an error");
     return -1;
   }
-  double total = mem->totalram;
-  double free = mem->freeram;
+  double total = mem.totalram;
+  double free = mem.freeram;
   return total - free;
 }
 
 double get_graph_info_mem_total() {
-//#include <slope.h>
-  struct sysinfo *mem = NULL;
-  sysinfo(mem);
-  double total = mem->totalram;
+  struct sysinfo mem;
+  sysinfo(&mem);
+  double total = mem.totalram;
   return total;
 }
 
 double get_swap_use() {
-  struct sysinfo *mem = NULL;
-  sysinfo(mem);
-  double total = mem->totalswap;
-  double free = mem->freeswap;
+  struct sysinfo mem;
+  sysinfo(&mem);
+  double total = mem.totalswap;
+  double free = mem.freeswap;
   return total - free;
 }
 
 double get_swap_total() {
-  struct sysinfo *mem = NULL;
-  sysinfo(mem);
-  double total = mem->totalswap;
+  struct sysinfo mem;
+  sysinfo(&mem);
+  double total = mem.totalswap;
   return total;
 }
 

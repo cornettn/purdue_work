@@ -1,5 +1,7 @@
 #include "gui.h"
 
+#include <gtk/gtk.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <cairo.h>
 
@@ -296,7 +298,7 @@ void static init_system_tab() {
 void show_process_options() {
   mylog("show process options");
   GObject *popup = gtk_builder_get_object(builder, "process_options");
-  gtk_popover_popup(GTK_POPOVER(popup));
+ // gtk_popover_popup(GTK_POPOVER(popup));
   gtk_widget_show_all(GTK_WIDGET(popup));
   mylog("Should be popupped");
 
