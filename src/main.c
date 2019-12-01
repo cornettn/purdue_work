@@ -29,32 +29,27 @@ void print_mounts(mount **list) {
 
 
 int main(int argc, char **argv) {
+/*
   GtkBuilder *builder;
   GtkWidget *window;
 
-  /* Initialize logging capabilities */
 
   init_log();
   mylog("Logging Capabilites setup");
 
-  /* Initialize GTK */
 
   gtk_init(&argc, &argv);
 
-  /* Build the UI from the file made with Glade */
   
   builder = gtk_builder_new();
   gtk_builder_add_from_file(builder, "builder.ui", NULL);
 
-  /* Initialize the GUI with all the information that should
-   * already there i.e System Information, etc */
 
   if (init_task_manager(builder) < 0) {
   	mylog("Error: Could not intialize the GUI");
   	fprintf(stderr, "Error: Initialization of GUI\n");
   }
 
-  /* Function call for using anything from sys_info */
   // init_sys_info();
 
   window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
@@ -62,6 +57,16 @@ int main(int argc, char **argv) {
 
   gtk_widget_show(window);
   gtk_main();
+*/
+
+  net_hist *temp = get_net();
+
+  printf("%lf - Recieving\n%lf - Total Recieved\n", temp->recieving, temp->total_recieved);
+  printf("%lf - Sending\n%lf - Total Sent\n", temp->sending, temp->total_sent);
+
+  ms_hist *test = get_memswap();
+  printf("\n\n%lf Mem Use\n%lf - Mem Total\n", test->mem_use, test->mem_total);
+  printf("%lf Swap Use\n%lf - Swap Total\n", test->swap_use, test->swap_total);
 
   return 0;
 }
