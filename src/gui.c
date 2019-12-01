@@ -1,6 +1,8 @@
 #include "gui.h"
 
 #include <stdio.h>
+#include <math.h>
+//`#include <glg_cairo.h>
 #include <cairo.h>
 
 #include "logger.h"
@@ -440,6 +442,61 @@ void static init_process_view() {
  * ##############################################
  */
 
+
+#define ZOOM_X (100.0)
+#define ZOOM_Y (100.0)
+
+gfloat f (gfloat x) {
+  return 0.03 * pow(x, 3);
+}
+
+gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
+                             gpointer user_data) {
+
+  GdkRectangle da;            /* GtkDrawingArea size */
+  gdouble dx = 5.0, dy = 5.0; /* Pixels between each point */
+  gdouble i, clip_x1 = 0.0, clip_y1 = 0.0, clip_x2 = 0.0, clip_y2 = 0.0;
+  GdkWindow *window = gtk_widget_get_window(widget);
+
+  /* Determine GtkDrawingArea dimensions */
+  gdk_window_get_geometry (window,
+            &da.x,
+            &da.y,
+            &da.width,
+            &da.height);
+
+  /* Draw on a white background */
+  cairo_set_source_rgb (cr, 255,255, 255);
+  cairo_paint (cr);
+
+  /* Change the transformation matrix */
+  cairo_translate (cr, da.width / 2, da.height / 2);
+  cairo_scale (cr, ZOOM_X, -ZOOM_Y);
+
+  /* Determine the data points to calculate (ie. those in the clipping zone */
+  cairo_device_to_user_distance (cr, &dx, &dy);
+  cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
+  cairo_set_line_width (cr, dx);
+
+  /* Draws x and y axis */
+  cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+  cairo_move_to (cr, clip_x1, clip_y1);
+  cairo_line_to (cr, clip_x2, clip_y1);
+  cairo_move_to (cr, clip_x1, clip_y1);
+  cairo_line_to (cr, clip_x1, clip_y2);
+  cairo_stroke (cr);
+
+  /* Link each data point */
+  for (i = clip_x1; i < clip_x2; i += dx)
+      cairo_line_to (cr, i, f (i));
+
+  /* Draw the curve */
+  cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
+  cairo_stroke (cr);
+
+  return FALSE;
+}
+
 /*
  * Thus function is used to draw the graphs on the resource tab.
  */
@@ -447,30 +504,7 @@ void static init_process_view() {
 gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
   mylog("Drawing Resource Graph");
 
-  //guint width = 0;
-  //guint height = 0;
-  //GtkStyleContext *context;
-  //GdkRGBA color;
-
-  //context = gtk_widget_get_style_context(widget);
-  //width = gtk_widget_get_allocated_width(widget);
-  //height = gtk_widget_get_allocated_height(widget);
-
-  //gtk_render_background(context, cr, 0, 0, width, height);
-
-  cairo_set_source_rgb(cr, 0.6, 0.6, 0.6);
-  cairo_set_line_width(cr, 1);
-  cairo_rectangle(cr, 180, 20, 80, 80);
-  cairo_stroke_preserve(cr);
-  cairo_fill(cr);
-
-  //gtk_style_context_get_color(context,
-  //                            gtk_style_context_get_state (context),
-  //                            &color);
-
-//  gdk_cairo_set_source_rgba(cr, &color);
-
-  cairo_fill(cr);
+  draw_memory_swap(widget, cr, data);
 
   return FALSE;
 } /* draw_resources() */
