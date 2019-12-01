@@ -22,7 +22,7 @@
 #define SLOPE_XYSCALE_H
 
 #include "scale.h"
-#include "xyaxis.h"
+#include "xyaxis.h'
 
 #define SLOPE_XYSCALE_TYPE (slope_xyscale_get_type())
 #define SLOPE_XYSCALE(obj) \
