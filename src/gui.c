@@ -486,6 +486,9 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   cairo_line_to (cr, clip_x1, clip_y2);
   cairo_stroke (cr);
 
+  /* Get data points */
+  ms_hist *data = get_memswap();
+
   /* Link each data point */
   for (i = clip_x1; i < clip_x2; i += dx)
       cairo_line_to (cr, i, f (i));
@@ -514,7 +517,7 @@ gboolean draw_resources (GtkWidget *widget, cairo_t *cr, gpointer data) {
  */
 
 void static init_resource_graphs() {
-  GObject *graph = gtk_builder_get_object(builder, "cpu_usage_drawing_area");
+  GObject *graph = gtk_builder_get_object(builder, "memory_and_swap_drawing_area");
   g_signal_connect(G_OBJECT(graph), "draw", G_CALLBACK(draw_resources), NULL);
 } /* init_resource_graphs() */
 
