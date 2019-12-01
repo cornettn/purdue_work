@@ -19,8 +19,9 @@
  */
 
 #include <math.h>
-#include <slope/sampler.h>
 #include <stdio.h>
+
+#include "sampler.h"
 
 typedef struct _SlopeSampler
 {

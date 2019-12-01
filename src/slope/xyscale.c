@@ -18,11 +18,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <slope/figure_p.h>
-#include <slope/item_p.h>
-#include <slope/xyscale.h>
-
 #include <stdio.h>
+
+#include "figure_p.h"
+#include "item_p.h"
+#include "xyscale.h"
+
 
 #define MAX_AXIS 6
 
