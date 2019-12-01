@@ -422,17 +422,61 @@ void static init_resource_graphs() {
  * ##############################################
  */
 
-void static add_row_to_file_system(GtkListStore *list_store, 
-                                   GtkTreeIter *iter
-                                   mount *mount) {
-  gtk_list_store_insert_with_values(list_store, &iter,
-    0, mount->dev_name,
-    1, mount->dev_dir,
-    2, mount->dev_type,
-    3, mount->dev_total_space,
-    4, mount->dev_avail_sapce,
-    5, mount->used_space, -1);
-}
+/*
+ * This function is used to append a mount to the file system list store.
+ */
+
+void static add_row_to_file_system(GtkListStore *list_store,
+                                   GtkTreeIter *iter,
+                                   mount *curr_mount) {
+
+  /* Create an enum for the different column numbers in the tree view */
+
+  enum {DEVICE, DIRECTORY, TYPE, TOT, FREE, AVAIL, UNUSE};
+  gint cols[] = {DEVICE, DIRECTORY, TYPE, TOT, FREE, AVAIL, UNUSE};
+
+  /* Initialize GValues */
+
+  GValue dev = G_VALUE_INIT;
+  GValue dir = G_VALUE_INIT;
+  GValue type = G_VALUE_INIT;
+  GValue tot = G_VALUE_INIT;
+  GValue free = G_VALUE_INIT;
+  GValue avail = G_VALUE_INIT;
+  GValue unuse = G_VALUE_INIT;
+
+  /* Cast GValues to approiate type */
+
+  g_value_init(&dev, G_TYPE_STRING);
+  g_value_init(&dir, G_TYPE_STRING);
+  g_value_init(&type, G_TYPE_STRING);
+  g_value_init(&tot, G_TYPE_DOUBLE);
+  g_value_init(&free, G_TYPE_DOUBLE);
+  g_value_init(&avail, G_TYPE_DOUBLE);
+  g_value_init(&unuse, G_TYPE_DOUBLE);
+
+  /* Set the values according to the contents of curr_mount */
+
+  g_value_set_static_string(&dev, curr_mount->dev_name);
+  g_value_set_static_string(&dir, curr_mount->dev_dir);
+  g_value_set_static_string(&type, curr_mount->dev_type);
+  g_value_set_double(&tot, curr_mount->dev_total_space);
+  g_value_set_double(&free, curr_mount->dev_free_space);
+  g_value_set_double(&avail, curr_mount->dev_avail_space);
+  g_value_set_double(&unuse, curr_mount->dev_used_space);
+
+  GValue vals[] = {dev, dir, type, tot, free, avail, unuse};
+
+  /* Append the row with the values to the list store */
+
+  gtk_list_store_append(list_store, iter);
+  gtk_list_store_set_valuesv(list_store, iter, cols, vals, 7);
+
+} /* add_row_to_file_system() */
+
+/*
+ * This function initializes the file_systems tab to display information.
+ */
 
 void static init_file_systems() {
   mount **mounts = get_mount_list();
@@ -461,32 +505,20 @@ void static init_file_systems() {
   GtkListStore *list_store =
     GTK_LIST_STORE(gtk_builder_get_object(builder, "file_system_list_store"));
 
-  // Example of how to use GValue
-  /*
-
-  GValue val = G_VALUE_INIT;
-  g_value_init(&val, G_TYPE_STRING);
-
-  g_value_set_static_string(&val, "Test0");
-  gtk_list_store_set_value(list_store, &iter, 0, &val);
-
-  g_value_set_static_string(&val, "Test1");
-  gtk_list_store_set_value(list_store, &iter, 1, &val);
-
-  g_value_set_static_string(&val, "Test2");
-  gtk_list_store_set_value(list_store, &iter, 2, &val);
-  
-  */
 
   /* Add all of the mounts to the list store */
 
+  //TODO Do not limit the number of mounts to 20
   int counter = 0;
   mount *curr_mount = mounts[counter];
   while(curr_mount != NULL) {
-    add_row_to_file_system(list_store, &iter, curr_mount)
-    curr_mount = mounts[++counter]
+    add_row_to_file_system(list_store, &iter, curr_mount);
+    curr_mount = mounts[++counter];
+    if (counter > 20) {
+      break;
+    }
   }
-}
+} /* init_file_systems() */
 
 /*
  * ##############################################
