@@ -77,9 +77,12 @@ char *get_mem_total() {
   FILE *fp = fopen("/proc/meminfo", "r");
   if (fp) {
     char *memstr = malloc(sizeof(char) * SMALL_BUF);
-    fscanf(fp, "MemTotal:\t%s", memstr);
+    double mem = 0;
+    fscanf(fp, "MemTotal:\t%lf", &mem);
     fclose(fp);
-    strcat(memstr, " Kb");
+
+    sprintf(memstr, "%.2f Gb", (mem / BYTE_DIVISOR / BYTE_DIVISOR));
+
     return memstr;
   }
   perror("Couldn't Open File in get_mem_total()");
