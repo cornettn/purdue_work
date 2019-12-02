@@ -1,6 +1,9 @@
 #ifndef PID_PARSER_H
 #define PID_PARSER_H
 
+#include <stdbool.h>
+
+
 typedef struct {
   int pid;            // The actual pid of the process X
   char *proc_name;    // The name of the process X
@@ -9,6 +12,7 @@ typedef struct {
   char *user;         // The user associated with the process
   char *state;        // The state that the process is in X
   int cpu_perc;
+  bool owned;
   double memory;
   double virt_memory;
   double res_memory;       // The memory being used by the process
@@ -31,6 +35,7 @@ int cont_proc(int);
 char *get_name(char *);
 char *get_user(char *);
 char *get_state(char *);
+bool get_owned(char *);
 double get_mem(char *);
 double get_virt_mem(char *);
 double get_res_mem(char *);

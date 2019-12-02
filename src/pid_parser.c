@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <signal.h>
 #include <pwd.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/sysinfo.h>
@@ -79,6 +80,7 @@ process_t **create_pid_list() {
       pid_list[count]->shared_mem = get_shared_mem(dir->d_name);
       pid_list[count]->cpu_time = get_cpu_time(dir->d_name);
       pid_list[count]->time_started = get_time_started(dir->d_name);
+      pid_list[count]->owned = get_owned(dir->d_name);
       count++;
     }
   }
@@ -131,6 +133,30 @@ char *get_state(char* pid) {
 
   return temp;
 } /* get_state() */
+
+
+/* Function that returns a bool to determine if the current user
+ * has permissions for a process */
+
+bool get_owned(char * pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/fd");
+
+  bool own = false;
+  FILE *fp = fopen(path, "r");
+  if (fp != NULL) {
+    own = true;
+    fclose(fp);
+    fp = NULL;
+  }
+
+  free(path);
+  path = NULL;
+
+  return own;
+} /* get_owned() */
 
 
 /* Function takes a pid and returns the user owner of the process */
