@@ -15,6 +15,7 @@
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
 #define PROCESS_PAGE_NUM (1)
+#define LEFT_CLICK (1)
 #define RIGHT_CLICK (3)
 
 /* Function Declarations */
@@ -297,6 +298,112 @@ void static init_system_tab() {
  */
 
 
+GtkTreePath *row_activated;
+GtkTreeView *proc_tree_view;
+GtkTreeModel *proc_model;
+gint pid_col = 3;
+
+process_t *get_proc(int pid) {
+  process_t **procs = create_pid_list();
+
+  int i = 0;
+  process_t *curr_proc = procs[i];
+  while(curr_proc != NULL) {
+    if (curr_proc->pid == pid) {
+      return curr_proc;
+    }
+    curr_proc = procs[++i];
+  }
+  return NULL;
+}
+
+void stop_process(GtkMenuItem *item, gpointer user_data) {
+  mylog("Stop Process");
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(proc_model, &iter, row_activated);
+  GValue val;
+  gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
+  gchar *string = (gchar *) g_value_get_string(&val);
+  int pid = atoi(string);
+  UNUSED(pid);
+  UNUSED(string);
+}
+
+void continue_process(GtkMenuItem *item, gpointer user_data) {
+  mylog("Continue Process");
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(proc_model, &iter, row_activated);
+  GValue val;
+  gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
+  gchar *string = (gchar *) g_value_get_string(&val);
+  int pid = atoi(string);
+  UNUSED(pid);
+  UNUSED(string);
+}
+
+void kill_process(GtkMenuItem *item, gpointer user_data) {
+  mylog("Kill Process");
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(proc_model, &iter, row_activated);
+  GValue val;
+  gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
+  gchar *string = (gchar *) g_value_get_string(&val);
+  int pid = atoi(string);
+  UNUSED(pid);
+  UNUSED(string);
+}
+
+void show_process_mem_maps(GtkMenuItem *item, gpointer user_data) {
+  mylog("Show process memory maps");
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(proc_model, &iter, row_activated);
+  GValue val;
+  gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
+  gchar *string = (gchar *) g_value_get_string(&val);
+  int pid = atoi(string);
+  UNUSED(pid);
+  UNUSED(string);
+}
+
+void show_process_open_files(GtkMenuItem *item, gpointer user_data) {
+  mylog("Show process open files");
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(proc_model, &iter, row_activated);
+  GValue val;
+  gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
+  gchar *string = (gchar *) g_value_get_string(&val);
+  int pid = atoi(string);
+  UNUSED(pid);
+  UNUSED(string);
+}
+
+void show_process_details(GtkMenuItem *item, gpointer user_data) {
+  mylog("Show Process Details");
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(proc_model, &iter, row_activated);
+  GValue val;
+  gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
+  gchar *string = (gchar *) g_value_get_string(&val);
+  int pid = atoi(string);
+  process_t *proc = get_proc(pid);
+
+  GtkLabel *name = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_name"));
+  GtkLabel *pid = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_pid"));
+  GtkLabel *user = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_user"));
+  GtkLabel *status = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_status"));
+  GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_mem"));
+  GtkLabel *vmem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_virtual_mem"));
+  GtkLabel *rmem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_resident_mem"));
+  GtkLabel *smem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_shared_mem"));
+  GtkLabel *cpu_time = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu_time"));
+  GtkLabel *time_start = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_time_started"));
+
+
+
+
+  UNUSED(proc);
+  UNUSED(string);
+}
 
 /*
  * This function will display the options for processes when a user right
@@ -307,6 +414,7 @@ void show_process_options(GtkTreeView *tree_view,
                           GtkTreePath *path,
                           GtkTreeViewColumn *column,
                           gpointer user_data) {
+  //row_activated = path;
   GtkMenu *menu = GTK_MENU(gtk_builder_get_object(builder,
             "proc_options"));
   gtk_menu_popup_at_pointer(menu, NULL);
@@ -316,21 +424,50 @@ void show_process_options(GtkTreeView *tree_view,
 void mouse_click(GtkWidget *widget,
                    GdkEvent *event,
                    gpointer user_data) {
-  if (event->type == GDK_BUTTON_PRESS &&
-      ((GdkEventButton *) event)->button == RIGHT_CLICK) {
+  if (((GdkEventAny *) event)->window == gtk_tree_view_get_bin_window(GTK_TREE_VIEW(widget)) &&
+      event->type == GDK_BUTTON_PRESS) {
+    if (((GdkEventButton *) event)->button == RIGHT_CLICK) {
 
-    gint x = (gint) ((GdkEventButton *) event)->x;
-    gint y = (gint) ((GdkEventButton *) event)->y;
+      mylog("Right Click on Process tree view");
 
-    GtkTreePath **path = malloc(sizeof(char *));
+      /* Right click on a certain row */
 
+      gint x = (gint) ((GdkEventButton *) event)->x;
+      gint y = (gint) ((GdkEventButton *) event)->y;
 
-    gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
-                                  x, y, path, NULL, NULL, NULL);
-    show_process_options(GTK_TREE_VIEW(widget),
-                         *path, NULL, NULL);
+      //GtkTreePath *path = malloc(sizeof(GtkTreePath *));
+
+      gboolean row_present = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
+                                  x, y, &row_activated, NULL, NULL, NULL);
+
+      /* Activate the row if it is present */
+
+      if (row_present) {
+        gtk_tree_view_row_activated(GTK_TREE_VIEW(widget), row_activated, NULL);
+      }
+    }
+  }
+  else if (event->type == GDK_2BUTTON_PRESS) {
+    if (((GdkEventButton *) event)->button == LEFT_CLICK) {
+      mylog("Double left click");
+
+      gint x = (gint) ((GdkEventButton *) event)->x;
+      gint y = (gint) ((GdkEventButton *) event)->y;
+
+      //GtkTreePath *path = malloc(sizeof(GtkTreePath *));
+
+      gboolean row_present = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
+                              x, y, &row_activated, NULL, NULL, NULL);
+      if (row_present) {
+        //row_activated = path;
+        GObject *details_menu_item = gtk_builder_get_object(builder, "proc_detailed_view");
+        show_process_details(GTK_MENU_ITEM(details_menu_item), NULL);
+      }
+    }
   }
 }
+
+
 
 /*
  * This function is used to append a row to end of the list store.
@@ -387,6 +524,7 @@ void display_procs(process_t **procs) {
 
   GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
+  proc_model = model;
 
   /* Get the tree path of the first row */
 
@@ -416,7 +554,7 @@ process_t **get_all_process() {
   /* This function is a placeholder */
 
   process_t *proc = (process_t *) malloc(sizeof(process_t));
-  proc->pid = "pid";
+  proc->pid = "12345";
   proc->proc_name = "name";
   proc->state = "state";
   proc->memory = "mem";
@@ -443,12 +581,35 @@ void static init_process_view() {
   process_t **procs = get_all_process();
   display_procs(procs);
 
+  /* Get all the objects that need signal linking */
 
   GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
+  proc_tree_view = GTK_TREE_VIEW(tree_view);
+  GObject *stop_menu_item = gtk_builder_get_object(builder, "proc_stop");
+  GObject *continue_menu_item = gtk_builder_get_object(builder, "proc_continue");
+  GObject *kill_menu_item = gtk_builder_get_object(builder, "proc_kill");
+  GObject *mem_maps_menu_item = gtk_builder_get_object(builder, "proc_mem_maps");
+  GObject *open_files_menu_item = gtk_builder_get_object(builder, "proc_open_files");
+  GObject *details_menu_item = gtk_builder_get_object(builder, "proc_detailed_view");
+
+  /* Link signals to the appropiate function */
+
   g_signal_connect(G_OBJECT(tree_view), "button-press-event",
       G_CALLBACK(mouse_click), NULL);
   g_signal_connect(G_OBJECT(tree_view), "row-activated",
       G_CALLBACK(show_process_options), NULL);
+  g_signal_connect(G_OBJECT(stop_menu_item), "activate",
+      G_CALLBACK(stop_process), NULL);
+  g_signal_connect(G_OBJECT(continue_menu_item), "activate",
+      G_CALLBACK(continue_process), NULL);
+  g_signal_connect(G_OBJECT(kill_menu_item), "activate",
+      G_CALLBACK(kill_process), NULL);
+  g_signal_connect(G_OBJECT(mem_maps_menu_item), "activate",
+      G_CALLBACK(show_process_mem_maps), NULL);
+  g_signal_connect(G_OBJECT(open_files_menu_item), "activate",
+      G_CALLBACK(show_process_open_files), NULL);
+  g_signal_connect(G_OBJECT(details_menu_item), "activate",
+      G_CALLBACK(show_process_details), NULL);
 
 } /* init_process_view() */
 
@@ -598,6 +759,8 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
 
   /* Draw the curve */
 
+  // Memory color: rgb(32, 32, 74)
+  // Swap color: rgb(78, 154, 6)
   cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
   cairo_stroke (cr);
 
@@ -661,6 +824,11 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
 //  UNUSED(data);
 
   /* Draw the curve */
+
+  // Sending color: rgb(138, 226, 52)
+  // Total sent color: rgb(78, 154, 6)
+  // Receiving color: rgb(252, 175, 62)
+  // Total received color: rgb(206, 92, 0)
 
   cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
   cairo_stroke (cr);
