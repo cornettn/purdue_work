@@ -28,7 +28,7 @@
 /* Function that fills a struct that gives system CPU usage info */
 
 cpu_hist *get_cur_cpu() {
-  cpu_hist *cur = NULL;
+  cpu_hist *cur = malloc(sizeof(cpu_hist));
 
   cur->cpu_num = get_cpu_num();
   cur->cpu_use_perc = get_cpu_usage();
