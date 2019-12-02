@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <dirent.h>
+#include <signal.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/sysinfo.h>
@@ -10,13 +11,13 @@
 #include "pid_parser.h"
 
 
-/* Defines? */
+/* Defines */
 
 
-/* Global Variables? */
+/* Global Variables */
 
 
-/* Initialize? */
+/* Initialize */
 
 
 /*
@@ -105,25 +106,43 @@ process_t *create_pid_list() {
 }
 
 
+/* Function returns the current amount of running processes on the system */
+
 int get_proc_num() {
   struct sysinfo info;
   sysinfo(&info);
   return info.procs;
-}
+} /* get_proc_num() */
 
 
+/* Kills a process specified by the given id */
+
+int kill_proc(int pid) {
+  if (kill(pid, SIGKILL) == 0) {
+    return 0;
+  }
+  return -1;
+} /* kill_proc() */
 
 
+/* Stops a process specified by the given id */
+
+int stop_proc(int pid) {
+  if (kill(pid, SIGSTOP) == 0) {
+    return 0;
+  }
+  return -1;
+} /* kill_proc() */
 
 
+/* Continues a process specified by the given id */
 
-
-
-
-
-
-
-
+int cont_proc(int pid) {
+  if (kill(pid, SIGCONT) == 0) {
+    return 0;
+  }
+  return -1;
+} /* kill_proc() */
 
 
 
