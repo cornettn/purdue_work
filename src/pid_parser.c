@@ -81,6 +81,8 @@ process_t **create_pid_list() {
     }
   }
 
+  pid_list[count] = NULL;
+
   return pid_list;
 } /* create_pid_list() */
 
