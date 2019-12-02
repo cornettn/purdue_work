@@ -8,7 +8,7 @@
 #include "graph_info.h"
 #include "file_system.h"
 #include "logger.h"
-
+#include "pid_parser.h"
 
 
 /* Debug function for the file_system */
@@ -29,7 +29,7 @@ void print_mounts(mount **list) {
 
 
 int main(int argc, char **argv) {
-
+/*
   GtkBuilder *builder;
   GtkWidget *window;
 
@@ -57,6 +57,26 @@ int main(int argc, char **argv) {
 
   gtk_widget_show(window);
   gtk_main();
+
+
+  net_hist *temp = get_net();
+
+  printf("%lf - Recieving\n%lf - Total Recieved\n", temp->recieving, temp->total_recieved);
+  printf("%lf - Sending\n%lf - Total Sent\n", temp->sending, temp->total_sent);
+
+  ms_hist *test = get_memswap();
+  printf("\n\n%lf Mem Use\n%lf - Mem Total\n", test->mem_use, test->mem_total);
+  printf("%lf Swap Use\n%lf - Swap Total\n", test->swap_use, test->swap_total);
+*/
+
+
+  process_t **test = create_pid_list();
+  int count = 0;
+
+  while (test[count] != NULL) {
+    printf("Name: %s, PID: %d\n", test[count]->proc_name, test[count]->pid);
+    count++;
+  }
 
   return 0;
 }

@@ -20,6 +20,17 @@ typedef struct {
 /* Initialization */
 
 
+process_t **create_pid_list();
+
+int get_proc_num();
+int kill_proc(int);
+int stop_proc(int);
+int cont_proc(int);
+
+
+char *get_name(char *);
+char *get_state(char *);
+double get_mem(char *);
 
 /* Functions */
 

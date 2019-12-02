@@ -13,11 +13,11 @@
 
 /* Defines */
 
+#define SMALL_BUF (1024)
+
 
 /* Global Variables */
 
-
-/* Initialize */
 
 
 /*
@@ -48,62 +48,107 @@
  */
 
 
-/* Functions */
+/* Function that creates and fills a list of structs representing processes */
 
-
-
-process_t *create_pid_list() {
+process_t **create_pid_list() {
 
   int count = 0;
-  process_t pid_list[1000];
+  int num = get_proc_num();
+  process_t **pid_list = malloc(sizeof(process_t *) * (num + 1));
 
   struct dirent* dir;
   DIR* start_dir = opendir("/proc");
 
-  while ((dir = readdir(start_dir)) != NULL) {
-    char *ptr;
-    int pid = 0;
-    if (strtol(dir->d_name, &ptr, pid) == 0) {
-      break;
+
+  while ((dir = readdir(start_dir))) {
+    if (atoi(dir->d_name) != 0) {
+      pid_list[count] = malloc(sizeof(process_t));
+
+      pid_list[count]->pid = atoi(dir->d_name);
+      pid_list[count]->cpu_perc = 0;
+      pid_list[count]->proc_name = get_name(dir->d_name);
+      pid_list[count]->state = get_state(dir->d_name);
+      pid_list[count]->memory = get_mem(dir->d_name);
+
+      pid_list[count]->mem_maps = NULL;
+      pid_list[count]->open_files = NULL;
+      pid_list[count]->virt_memory = NULL;
+      pid_list[count]->res_memory = NULL;
+      pid_list[count]->shared_mem = NULL;
+      pid_list[count]->cpu_time = NULL;
+      pid_list[count]->time_started = NULL;
+      count++;
     }
-
-    pid_list[count].pid = strtol(dir->d_name, &ptr, pid);
-    pid_list[count].cpu_perc = 0;
-
-    /* Getting PID Name */
-    char * path = "/proc/";
-    strcat(path, dir->d_name);
-
-    char *path_stat = path;
-    strcat(path_stat, "/stat");
-
-    FILE *fp = fopen(path_stat, "r");
-    fscanf(fp, "%*d (%s) %s", pid_list[count].proc_name, pid_list[count].state);
-    fclose(fp);
-    fp = NULL;
-
-    /* ----- */
-
-
-    char *path_mstat = path;
-    strcat(path_mstat, "/mstat");
-
-    fp = fopen(path_mstat, "r");
-
-    double rss = 0;
-    double swap = 0;
-    fscanf(fp, "%*s %lf %*s %*s %*s %lf", &rss, &swap);
-    fclose(fp);
-    fp = NULL;
-
-    pid_list[count].memory = rss + swap;
-
-    count++;
   }
-  //pid_list[count] = malloc(sizeof(char));
-  //pid_list[count] = '\0';
-  return 0;
-}
+
+  return pid_list;
+} /* create_pid_list() */
+
+
+/* Returns the name of the given pid */
+
+char *get_name(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/stat");
+
+  char * temp = malloc(sizeof(char) * SMALL_BUF);
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*d (%s) ", temp);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  temp[strlen(temp) - 1] = '\0';
+
+  return temp;
+} /* get_name() */
+
+
+/* Returns the state of a given pid */
+
+char *get_state(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/stat");
+
+  char * temp = malloc(sizeof(char) * SMALL_BUF);
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*d %*s %s ", temp);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  return temp;
+} /* get_state() */
+
+
+/* Returns the memory used by a given pid */
+
+double get_mem(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/statm");
+
+  double rss = 0;
+  double swap = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*s %lf %*s %*s %*s %lf", &rss, &swap);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  return (rss + swap);
+} /* get_mem() */
 
 
 /* Function returns the current amount of running processes on the system */
