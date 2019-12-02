@@ -259,6 +259,10 @@ void static link_tabs() {
  * ##############################################
  */
 
+/*
+ * This function is used to initialize the system tab.
+ */
+
 void static init_system_tab() {
 
   /* Initialize sys_info functions */
@@ -290,10 +294,10 @@ void static init_system_tab() {
   gtk_label_set_text(GTK_LABEL(proc_type), info.CPU_info);
 
   char disk_storage[1024] = {0};
-  sprintf(disk_storage, "%.2f", info.disk_storage);
+  sprintf(disk_storage, "%.2f Gb", info.disk_storage);
   gtk_label_set_text(GTK_LABEL(disk_space), disk_storage);
 
-}
+} /* init_system_tab() */
 
 /*
  * ##############################################
@@ -307,15 +311,33 @@ void static init_system_tab() {
  * ##############################################
  */
 
+/* Varaibles to help process functions */
+
 GtkTreePath *row_activated;
 GtkTreeView *proc_tree_view;
 GtkTreeModel *proc_model;
 gint pid_col = 3;
 
+/*
+ * This function is used to refresh the inforation on the task manager.
+ */
+
 void refresh() {
+
+  /* Refresh Processes */
+
   process_t **procs = create_pid_list();
   display_procs(procs);
-}
+
+  /* Refresh file systems */
+
+  init_file_systems();
+} /* refresh() */
+
+
+/*
+ * This function is used to process_t struct of any process given the pid.
+ */
 
 process_t *get_proc(int pid) {
   process_t **procs = create_pid_list();
@@ -329,7 +351,11 @@ process_t *get_proc(int pid) {
     curr_proc = procs[++i];
   }
   return NULL;
-}
+} /* get_proc() */
+
+/*
+ * This function is used to stop a process.
+ */
 
 void stop_process(GtkMenuItem *item, gpointer user_data) {
   mylog("Stop Process");
@@ -340,9 +366,11 @@ void stop_process(GtkMenuItem *item, gpointer user_data) {
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   stop_proc(pid);
-  UNUSED(pid);
-  UNUSED(string);
-}
+} /* stop_process() */
+
+/*
+ * This function is used to continuw a stopped process.
+ */
 
 void continue_process(GtkMenuItem *item, gpointer user_data) {
   mylog("Continue Process");
@@ -353,9 +381,11 @@ void continue_process(GtkMenuItem *item, gpointer user_data) {
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   cont_proc(pid);
-  UNUSED(pid);
-  UNUSED(string);
-}
+} /* continue_process() */
+
+/*
+ * This function is used to kill a process.
+ */
 
 void kill_process(GtkMenuItem *item, gpointer user_data) {
   mylog("Kill Process");
@@ -366,9 +396,12 @@ void kill_process(GtkMenuItem *item, gpointer user_data) {
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   kill_proc(pid);
-  UNUSED(pid);
-  UNUSED(string);
-}
+} /* kill_process() */
+
+
+/*
+ * This function is used to display the memory maps ofa process.
+ */
 
 void show_process_mem_maps(GtkMenuItem *item, gpointer user_data) {
   mylog("Show process memory maps");
@@ -380,7 +413,11 @@ void show_process_mem_maps(GtkMenuItem *item, gpointer user_data) {
   int pid = atoi(string);
   UNUSED(pid);
   UNUSED(string);
-}
+} /* show_process_mem_maps() */
+
+/*
+ * This function is used to open a processes' open files.
+ */
 
 void show_process_open_files(GtkMenuItem *item, gpointer user_data) {
   mylog("Show process open files");
@@ -392,12 +429,24 @@ void show_process_open_files(GtkMenuItem *item, gpointer user_data) {
   int pid = atoi(string);
   UNUSED(pid);
   UNUSED(string);
-}
+} /* show_process_open_files() */
+
+/*
+ * This function hides the given window. It is primarily used to prevent
+ * the process details window from being deleted.
+ */
 
 gboolean hide(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
   gtk_widget_hide(widget);
+
+  /* Return true to tell the software that the even was handled */
+
   return 1;
-}
+} /* hide() */
+
+/*
+ * This function is used to show the details of the selected process.
+ */
 
 void show_process_details(GtkMenuItem *item, gpointer user_data) {
   mylog("Show Process Details");
@@ -409,18 +458,34 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   int pid = atoi(string);
   process_t *proc = get_proc(pid);
 
-  GtkWidget *details = GTK_WIDGET(gtk_builder_get_object(builder, "proc_detail_view"));
-  GtkLabel *name = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_name"));
-  GtkLabel *id = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_pid"));
-  GtkLabel *user = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_user"));
-  GtkLabel *status = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_status"));
-  GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_mem"));
-  GtkLabel *vmem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_virtual_mem"));
-  GtkLabel *rmem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_resident_mem"));
-  GtkLabel *smem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_shared_mem"));
-  GtkLabel *cpu_perc = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu"));
-  GtkLabel *cpu_time = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu_time"));
-  GtkLabel *time_start = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_time_started"));
+  /* Get all of Gtk Objects involved in the details view */
+
+  GtkWidget *details = GTK_WIDGET(gtk_builder_get_object(builder,
+        "proc_detail_view"));
+  GtkLabel *name = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_name"));
+  GtkLabel *id = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_pid"));
+  GtkLabel *user = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_user"));
+  GtkLabel *status = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_status"));
+  GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_mem"));
+  GtkLabel *vmem = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_virtual_mem"));
+  GtkLabel *rmem = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_resident_mem"));
+  GtkLabel *smem = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_shared_mem"));
+  GtkLabel *cpu_perc = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_cpu"));
+  GtkLabel *cpu_time = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_cpu_time"));
+  GtkLabel *time_start = GTK_LABEL(gtk_builder_get_object(builder,
+        "detailed_proc_time_started"));
+
+  /* Convert non char * types to char * */
 
   char *pid_str = malloc(50);
   sprintf(pid_str, "%d%c", pid, '\0');
@@ -461,18 +526,14 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   g_signal_connect(G_OBJECT(details), "delete-event", G_CALLBACK(hide), NULL);
   gtk_widget_show(details);
 
-  UNUSED(name);
-  UNUSED(id);
-  UNUSED(user);
-  UNUSED(status);
-  UNUSED(mem);
-  UNUSED(vmem);
-  UNUSED(rmem);
-  UNUSED(smem);
-  UNUSED(cpu_time);
-  UNUSED(time_start);
-  UNUSED(proc);
-  UNUSED(string);
+  free(pid_str);
+  free(mem_str);
+  free(vmem_str);
+  free(rmem_str);
+  free(smem_str);
+  free(cpu_perc_str);
+  free(cpu_time_str);
+  free(time_start_str);
 }
 
 /*
@@ -484,12 +545,14 @@ void show_process_options(GtkTreeView *tree_view,
                           GtkTreePath *path,
                           GtkTreeViewColumn *column,
                           gpointer user_data) {
-  //row_activated = path;
   GtkMenu *menu = GTK_MENU(gtk_builder_get_object(builder,
             "proc_options"));
   gtk_menu_popup_at_pointer(menu, NULL);
 } /* show_process_options() */
 
+/*
+ * This function is used to handle a mouse click on the tree view.
+ */
 
 void mouse_click(GtkWidget *widget,
                    GdkEvent *event,
@@ -504,8 +567,6 @@ void mouse_click(GtkWidget *widget,
 
       gint x = (gint) ((GdkEventButton *) event)->x;
       gint y = (gint) ((GdkEventButton *) event)->y;
-
-      //GtkTreePath *path = malloc(sizeof(GtkTreePath *));
 
       gboolean row_present = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
                                   x, y, &row_activated, NULL, NULL, NULL);
@@ -524,20 +585,15 @@ void mouse_click(GtkWidget *widget,
       gint x = (gint) ((GdkEventButton *) event)->x;
       gint y = (gint) ((GdkEventButton *) event)->y;
 
-      //GtkTreePath *path = malloc(sizeof(GtkTreePath *));
-
       gboolean row_present = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
                               x, y, &row_activated, NULL, NULL, NULL);
       if (row_present) {
-        //row_activated = path;
         GObject *details_menu_item = gtk_builder_get_object(builder, "proc_detailed_view");
         show_process_details(GTK_MENU_ITEM(details_menu_item), NULL);
       }
     }
   }
-}
-
-
+} /* mouse_click() */
 
 /*
  * This function is used to append a row to end of the list store.
@@ -573,7 +629,7 @@ void static add_row_to_processes(GtkListStore *list_store,
   g_value_set_static_string(&status, proc->state);
 
   char *buf2 = malloc(50);
-  sprintf(buf2, "%lf%c", proc->cpu_time, '\0');
+  sprintf(buf2, "%d%c", proc->cpu_perc, '\0');
 
   g_value_set_static_string(&cpu, buf2);
 
@@ -583,7 +639,7 @@ void static add_row_to_processes(GtkListStore *list_store,
   g_value_set_static_string(&pid, buf);
 
   char *buf1 = malloc(50);
-  sprintf(buf1, "%lf%c", proc->memory, '\0');
+  sprintf(buf1, "%.0f Bytes%c", proc->memory, '\0');
 
   g_value_set_static_string(&mem, buf1);
 
@@ -621,6 +677,8 @@ void display_procs(process_t **procs) {
     GTK_LIST_STORE(gtk_builder_get_object(builder, "processes_list_store"));
 
   /* Add processes to tree view */
+
+  gtk_list_store_clear(list_store);
 
   gboolean all = gtk_check_menu_item_get_active(all_proc);
   gboolean my = gtk_check_menu_item_get_active(my_proc);
@@ -834,6 +892,20 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
 
   /* Link each data point */
 
+  ms_hist *data = get_memswap();
+
+  char *mem_str = malloc(100);
+  sprintf(mem_str, "%.2f GB of %.2f GB", (data->mem_use / pow(1024, 3)), (data->mem_total / pow(1024, 3)));
+
+  char *swap_str = malloc(100);
+  sprintf(swap_str, "%.2f GB of %.2f GB", (data->swap_use / pow(1024, 3)), (data->swap_total / pow(1024, 3)));
+
+  GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder, "mem_swap_mem"));
+  gtk_label_set_text(mem, mem_str);
+
+  GtkLabel *swp = GTK_LABEL(gtk_builder_get_object(builder, "mem_swap_swap"));
+  gtk_label_set_text(swp, swap_str);
+
   for (i = clip_x1; i < clip_x2; i += dx)
       cairo_line_to (cr, i, f (i));
 
@@ -896,14 +968,40 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
   cairo_stroke (cr);
 
   /* Get data points */
-//  ms_hist *data = get_memswap();
+
+  net_hist *data = get_net();
+
+
+  char *rec_str = malloc(100);
+  sprintf(rec_str, "%.2f KB/s ", (data->recieving / pow(1024, 1)));
+
+  char *rec_tot_str = malloc(100);
+  sprintf(rec_tot_str, "%.2f GB ", (data->total_recieved / pow(1024, 3)));
+
+  char *send_str = malloc(100);
+  sprintf(send_str, "%.2f KB/s ", (data->sending / pow(1024, 1)));
+
+  char *send_tot_str = malloc(100);
+  sprintf(send_tot_str, "%.2f GB ", (data->total_sent / pow(1024, 3)));
+
+  GtkLabel *send = GTK_LABEL(gtk_builder_get_object(builder, "send"));
+  gtk_label_set_text(send, send_str);
+
+  GtkLabel *send_tot = GTK_LABEL(gtk_builder_get_object(builder, "send_tot"));
+  gtk_label_set_text(send_tot, send_tot_str);
+
+  GtkLabel *rec = GTK_LABEL(gtk_builder_get_object(builder, "rec"));
+  gtk_label_set_text(rec, rec_str);
+
+  GtkLabel *rec_tot = GTK_LABEL(gtk_builder_get_object(builder, "rec_tot"));
+  gtk_label_set_text(rec_tot, rec_tot_str);
 
   /* Link each data point */
 
   for (i = clip_x1; i < clip_x2; i += dx)
       cairo_line_to (cr, i, f (i));
 
-//  UNUSED(data);
+  UNUSED(data);
 
   /* Draw the curve */
 
@@ -1029,6 +1127,7 @@ void static init_file_systems() {
   GtkListStore *list_store =
     GTK_LIST_STORE(gtk_builder_get_object(builder, "file_system_list_store"));
 
+  gtk_list_store_clear(list_store);
 
   /* Add all of the mounts to the list store */
 
