@@ -299,7 +299,6 @@ void static init_system_tab() {
  * ##############################################
  */
 
-
 GtkTreePath *row_activated;
 GtkTreeView *proc_tree_view;
 GtkTreeModel *proc_model;
