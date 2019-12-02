@@ -29,7 +29,7 @@ void print_mounts(mount **list) {
 
 
 int main(int argc, char **argv) {
-/*
+
   GtkBuilder *builder;
   GtkWidget *window;
 
@@ -67,9 +67,9 @@ int main(int argc, char **argv) {
   ms_hist *test = get_memswap();
   printf("\n\n%lf Mem Use\n%lf - Mem Total\n", test->mem_use, test->mem_total);
   printf("%lf Swap Use\n%lf - Swap Total\n", test->swap_use, test->swap_total);
-*/
 
 
+/*
   process_t **test = create_pid_list();
   int count = 0;
 
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     printf("Name: %s, PID: %d\n", test[count]->proc_name, test[count]->pid);
     count++;
   }
-
+*/
   return 0;
 }
 

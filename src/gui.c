@@ -382,14 +382,14 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   mylog("Show Process Details");
   GtkTreeIter iter;
   gtk_tree_model_get_iter(proc_model, &iter, row_activated);
-  GValue val;
+  GValue val = {0};
   gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   process_t *proc = get_proc(pid);
 
   GtkLabel *name = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_name"));
-  GtkLabel *pid = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_pid"));
+  GtkLabel *id = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_pid"));
   GtkLabel *user = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_user"));
   GtkLabel *status = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_status"));
   GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_mem"));
@@ -399,6 +399,16 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   GtkLabel *cpu_time = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu_time"));
   GtkLabel *time_start = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_time_started"));
 
+  UNUSED(name);
+  UNUSED(id);
+  UNUSED(user);
+  UNUSED(status);
+  UNUSED(mem);
+  UNUSED(vmem);
+  UNUSED(rmem);
+  UNUSED(smem);
+  UNUSED(cpu_time);
+  UNUSED(time_start);
 
 
 
@@ -503,8 +513,16 @@ void static add_row_to_processes(GtkListStore *list_store,
   g_value_set_static_string(&name, proc->proc_name);
   g_value_set_static_string(&status, proc->state);
   g_value_set_static_string(&cpu, proc->cpu_time);
-  g_value_set_static_string(&pid, proc->pid);
-  g_value_set_static_string(&mem, proc->memory);
+
+  char *buf = malloc(50);
+  sprintf(buf, "%d%c", proc->pid, '\0');
+
+  g_value_set_static_string(&pid, buf);
+
+  char *buf1 = malloc(50);
+  sprintf(buf1, "%lf%c", proc->memory, '\0');
+
+  g_value_set_static_string(&mem, buf1);
 
   GValue vals[] = {name, status, cpu, pid, mem};
 
@@ -546,26 +564,11 @@ void display_procs(process_t **procs) {
   while (curr_proc != NULL) {
     add_row_to_processes(list_store, &iter, curr_proc);
     curr_proc = procs[++counter];
+    if (counter > 20) {
+      break;
+    }
   }
 } /* display_processes() */
-
-
-//PLACEHOLDER
-process_t **get_all_process() {
-  /* This function is a placeholder */
-
-  process_t *proc = (process_t *) malloc(sizeof(process_t));
-  proc->pid = "12345";
-  proc->proc_name = "name";
-  proc->state = "state";
-  proc->memory = "mem";
-  proc->cpu_time = "cpu_time";
-
-  process_t **procs = (process_t **) malloc(2 * sizeof(process_t *));
-  procs[0] = proc;
-  procs[1] = NULL;
-  return procs;
-}
 
 /*
  * This function is used to initialize the process tab.
@@ -579,7 +582,7 @@ void static init_process_view() {
 
   // TODO Get all of the processes from the pid_parser
 
-  process_t **procs = get_all_process();
+  process_t **procs = create_pid_list();
   display_procs(procs);
 
   /* Get all the objects that need signal linking */
@@ -957,9 +960,6 @@ void static init_file_systems() {
   while(curr_mount != NULL) {
     add_row_to_file_system(list_store, &iter, curr_mount);
     curr_mount = mounts[++counter];
-    if (counter > 20) {
-      break;
-    }
   }
 } /* init_file_systems() */
 
