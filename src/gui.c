@@ -326,6 +326,7 @@ void stop_process(GtkMenuItem *item, gpointer user_data) {
   gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
+  stop_proc(pid);
   UNUSED(pid);
   UNUSED(string);
 }
@@ -338,6 +339,7 @@ void continue_process(GtkMenuItem *item, gpointer user_data) {
   gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
+  cont_proc(pid);
   UNUSED(pid);
   UNUSED(string);
 }
@@ -350,6 +352,7 @@ void kill_process(GtkMenuItem *item, gpointer user_data) {
   gtk_tree_model_get_value(proc_model, &iter, pid_col, &val);
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
+  kill_proc(pid);
   UNUSED(pid);
   UNUSED(string);
 }
@@ -388,6 +391,7 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   int pid = atoi(string);
   process_t *proc = get_proc(pid);
 
+  GtkWidget *details = GTK_WIDGET(gtk_builder_get_object(builder, "proc_detail_view"));
   GtkLabel *name = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_name"));
   GtkLabel *id = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_pid"));
   GtkLabel *user = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_user"));
@@ -399,6 +403,39 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   GtkLabel *cpu_time = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu_time"));
   GtkLabel *time_start = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_time_started"));
 
+  char *pid_str = malloc(50);
+  sprintf(pid_str, "%d%c", pid, '\0');
+
+  char *mem_str = malloc(50);
+  sprintf(mem_str, "%lf%c", proc->memory, '\0');
+
+  char *vmem_str = malloc(50);
+  sprintf(vmem_str, "%lf%c", proc->virt_memory, '\0');
+
+  char *rmem_str = malloc(50);
+  sprintf(rmem_str, "%lf%c", proc->res_memory, '\0');
+
+  char *smem_str = malloc(50);
+  sprintf(smem_str, "%lf%c", proc->shared_mem, '\0');
+
+  char *cpu_time_str = malloc(50);
+  sprintf(cpu_time_str, "%lf%c", proc->cpu_time, '\0');
+
+
+  gtk_label_set_text(name, proc->proc_name);
+  gtk_label_set_text(id, pid_str);
+  //TODO Add user
+  gtk_label_set_text(status, proc->state);
+  gtk_label_set_text(mem, mem_str);
+  gtk_label_set_text(vmem, vmem_str);
+  gtk_label_set_text(rmem, rmem_str);
+  gtk_label_set_text(smem, smem_str);
+  gtk_label_set_text(cpu_time, cpu_time_str);
+  //TODO Add time_start
+
+  g_signal_connect(G_OBJECT(details), "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+  gtk_widget_show(details);
+
   UNUSED(name);
   UNUSED(id);
   UNUSED(user);
@@ -409,9 +446,6 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   UNUSED(smem);
   UNUSED(cpu_time);
   UNUSED(time_start);
-
-
-
   UNUSED(proc);
   UNUSED(string);
 }
@@ -568,9 +602,6 @@ void display_procs(process_t **procs) {
   while (curr_proc != NULL) {
     add_row_to_processes(list_store, &iter, curr_proc);
     curr_proc = procs[++counter];
-    if (counter > 20) {
-      break;
-    }
   }
 } /* display_processes() */
 
@@ -958,7 +989,6 @@ void static init_file_systems() {
 
   /* Add all of the mounts to the list store */
 
-  //TODO Do not limit the number of mounts to 20
   int counter = 0;
   mount *curr_mount = mounts[counter];
   while(curr_mount != NULL) {
