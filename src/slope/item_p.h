@@ -21,8 +21,8 @@
 #ifndef SLOPE_ITEM_P_H
 #define SLOPE_ITEM_P_H
 
-#include <slope/item.h>
-#include <slope/view.h>
+#include "item.h"
+#include "view.h"
 
 void _item_draw(SlopeItem *self, cairo_t *cr);
 

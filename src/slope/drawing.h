@@ -23,7 +23,8 @@
 
 #include <cairo/cairo.h>
 #include <glib.h>
-#include <slope/global.h>
+
+#include "global.h"
 
 SLOPE_BEGIN_DECLS
 
