@@ -10,10 +10,10 @@ typedef struct {
   char *state;        // The state that the process is in X
   int cpu_perc;
   double memory;
-  char *virt_memory;
-  char *res_memory;       // The memory being used by the process
-  char *shared_mem;   // The shared memory of the process
-  char *cpu_time;     // The CPU time that the process gets
+  double virt_memory;
+  double res_memory;       // The memory being used by the process
+  double shared_mem;   // The shared memory of the process
+  double cpu_time;     // The CPU time that the process gets
   char *time_started; // The time that the prcoess time started
 } process_t;
 
@@ -31,6 +31,11 @@ int cont_proc(int);
 char *get_name(char *);
 char *get_state(char *);
 double get_mem(char *);
+double get_virt_mem(char *);
+double get_res_mem(char *);
+double get_shared_mem(char *);
+double get_cpu_time(char *);
+char *get_time_started(char *);
 
 /* Functions */
 

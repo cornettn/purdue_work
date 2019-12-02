@@ -4,7 +4,7 @@
 
 
 int get_cpu_num();
-double *get_cpu_use_list();
+double get_cpu_usage();
 
 double get_graph_info_mem_use();
 double get_graph_info_mem_total();
@@ -19,7 +19,7 @@ double get_total_sent();
 
 typedef struct cpu_hist {
   int cpu_num;
-  double *cpu_use_list;
+  double cpu_use_perc;
 }cpu_hist;
 
 typedef struct mem_and_swap_hist {

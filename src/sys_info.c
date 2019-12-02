@@ -36,7 +36,7 @@ int init_sys_info () {
     return -1;
  }
   return 0;
-}
+} /* init_sys_info() */
 
 
 
@@ -54,21 +54,21 @@ int init_sys_info () {
 
 char *get_OS_version() {
   return info.release;
-}
+} /* get_OS_version() */
 
 
 /* Function for finding kernal version */
 
 char *get_kernel_version() {
   return info.version;
-}
+} /* get_kernal_version() */
 
 
 /* Function for getting OS name */
 
 char *get_OS_name() {
   return info.sysname;
-}
+} /* get_OS_name() */
 
 
 /* Function for getting Total Memory, returns NULL on error, what is returned must be freed */
@@ -84,7 +84,7 @@ char *get_mem_total() {
   }
   perror("Couldn't Open File in get_mem_total()");
   return NULL;
-}
+} /* get_mem_total() */
 
 
 /* Function for getting CPU info, returns NULL on error, what is returned must be freed */
@@ -106,7 +106,7 @@ char *get_CPU_info() {
   }
   perror("Couldn't Open file in get_CPU_info");
   return NULL;
-}
+} /* get_CPU_info() */
 
 
 /* Function for get the amount of space available in the file system, returns -1 on error */
@@ -137,7 +137,7 @@ double get_disk_storage() {
   perror("get_disk_storage could not find root");
   endmntent(fp);
   return -1;
-}
+} /* get_disk_storage() */
 
 
 /* Function for filling the info struct */
@@ -149,8 +149,6 @@ void fill_info(sys_info *fill) {
   fill->mem_total = get_mem_total();
   fill->CPU_info = get_CPU_info();
   fill->disk_storage = get_disk_storage();
-}
-
-
+} /* fill_info() */
 
 

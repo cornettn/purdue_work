@@ -72,10 +72,10 @@ process_t **create_pid_list() {
 
       pid_list[count]->mem_maps = NULL;
       pid_list[count]->open_files = NULL;
-      pid_list[count]->virt_memory = NULL;
-      pid_list[count]->res_memory = NULL;
-      pid_list[count]->shared_mem = NULL;
-      pid_list[count]->cpu_time = NULL;
+      pid_list[count]->virt_memory = get_virt_mem(dir->d_name);
+      pid_list[count]->res_memory = get_res_mem(dir->d_name);
+      pid_list[count]->shared_mem = get_shared_mem(dir->d_name);
+      pid_list[count]->cpu_time = 0;
       pid_list[count]->time_started = NULL;
       count++;
     }
@@ -149,6 +149,69 @@ double get_mem(char* pid) {
 
   return (rss + swap);
 } /* get_mem() */
+
+
+/* Function finds and returns the virtual memory utilized by a given process */
+
+double get_virt_mem(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/statm");
+
+  double virt = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%lf ", &virt);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  return virt;
+} /* get_virt_mem() */
+
+
+/* Function finds and returns the resident memory utilized by a given process */
+
+double get_res_mem(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/statm");
+
+  double res = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*s %lf ", &res);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  return res;
+} /* get_res_mem() */
+
+
+/* Function finds and returns the shared memory utilized by a given process */
+
+double get_shared_mem(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/statm");
+
+  double shared = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*s %*s %lf ", &shared);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  return shared;
+} /* get_shared_mem() */
 
 
 /* Function returns the current amount of running processes on the system */
