@@ -21,7 +21,7 @@
 #ifndef SLOPE_SCALE_P_H
 #define SLOPE_SCALE_P_H
 
-#include <slope/scale.h>
+#include "scale.h"
 
 void _scale_set_figure(SlopeScale *self, SlopeFigure *figure);
 

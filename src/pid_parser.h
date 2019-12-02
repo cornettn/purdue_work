@@ -2,7 +2,7 @@
 #define PID_PARSER_H
 
 typedef struct {
-  int pid;            // The actual pid of the process
+  char *pid;          // The actual pid of the process
   char *proc_name;    // The name of the process
   char *mem_maps;     // The memory maps of the process
   char *open_files;   // The open files of the process
