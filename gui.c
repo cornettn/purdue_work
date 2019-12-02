@@ -851,7 +851,7 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
 
   /* Get data points */
 
-  /*
+
   cpu_hist *data = get_cur_cpu();
 
   char *cpu_perc_str = malloc(100);
@@ -861,7 +861,7 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
         "cpu_perc_label"));
   gtk_label_set_text(cpu_perc, cpu_perc_str);
 
-  */
+
   /* Link each data point */
 
   for (i = clip_x1; i < clip_x2; i += dx)
