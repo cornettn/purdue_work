@@ -27,7 +27,7 @@
 mount **get_mount_list() {
 
   int mount_count = get_mount_num();
-  mount **list = malloc(sizeof(mount*) * mount_count);
+  mount **list = malloc(sizeof(mount*) * (mount_count + 1));
 
   FILE *fp;
   struct mntent * mnt;
@@ -52,6 +52,7 @@ mount **get_mount_list() {
       list[x]->dev_used_space = get_dev_used_space(mnt);
     }
   }
+  list[mount_count] = NULL;
   endmntent(fp);
   return list;
 } /* get_mount_num() */
