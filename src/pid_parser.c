@@ -4,6 +4,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <signal.h>
+#include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/sysinfo.h>
@@ -72,11 +73,12 @@ process_t **create_pid_list() {
 
       pid_list[count]->mem_maps = NULL;
       pid_list[count]->open_files = NULL;
+      pid_list[count]->user = get_user(dir->d_name);
       pid_list[count]->virt_memory = get_virt_mem(dir->d_name);
       pid_list[count]->res_memory = get_res_mem(dir->d_name);
       pid_list[count]->shared_mem = get_shared_mem(dir->d_name);
-      pid_list[count]->cpu_time = 0;
-      pid_list[count]->time_started = NULL;
+      pid_list[count]->cpu_time = get_cpu_time(dir->d_name);
+      pid_list[count]->time_started = get_time_started(dir->d_name);
       count++;
     }
   }
@@ -129,6 +131,29 @@ char *get_state(char* pid) {
 
   return temp;
 } /* get_state() */
+
+
+/* Function takes a pid and returns the user owner of the process */
+
+char *get_user(char* pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/status");
+
+  int uid = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*[^Uid:]Uid: %d ", &uid);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  struct passwd *temp = getpwuid(uid);
+
+  return temp->pw_name;
+} /* get_user() */
 
 
 /* Returns the memory used by a given pid */
@@ -214,6 +239,52 @@ double get_shared_mem(char* pid) {
 
   return shared;
 } /* get_shared_mem() */
+
+
+/* Function finds the given cpu time for the process */
+
+double get_cpu_time(char * pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/stat");
+
+  double time = 0;
+  double utime = 0;
+  double stime = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lf %lf ", &utime, &stime);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  time = (utime + stime);
+
+  return time;
+} /* get_cpu_time() */
+
+
+/* Function finds the time at which the given pid was started */
+
+double get_time_started(char * pid) {
+  char * path = malloc(sizeof(char) * SMALL_BUF);
+  strcpy(path, "/proc/");
+  strcat(path, pid);
+  strcat(path, "/stat");
+
+  double time = 0;
+  FILE *fp = fopen(path, "r");
+  fscanf(fp, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lf ", &time);
+  fclose(fp);
+  fp = NULL;
+
+  free(path);
+  path = NULL;
+
+  return time;
+} /* get_time_started() */
 
 
 /* Function returns the current amount of running processes on the system */

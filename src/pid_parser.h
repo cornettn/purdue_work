@@ -14,7 +14,7 @@ typedef struct {
   double res_memory;       // The memory being used by the process
   double shared_mem;   // The shared memory of the process
   double cpu_time;     // The CPU time that the process gets
-  char *time_started; // The time that the prcoess time started
+  double time_started; // The time that the prcoess time started
 } process_t;
 
 /* Initialization */
@@ -29,13 +29,14 @@ int cont_proc(int);
 
 
 char *get_name(char *);
+char *get_user(char *);
 char *get_state(char *);
 double get_mem(char *);
 double get_virt_mem(char *);
 double get_res_mem(char *);
 double get_shared_mem(char *);
 double get_cpu_time(char *);
-char *get_time_started(char *);
+double get_time_started(char *);
 
 /* Functions */
 
