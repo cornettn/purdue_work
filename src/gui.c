@@ -33,6 +33,8 @@ void static init_process_view();
 void static init_resource_graphs();
 void static init_file_systems();
 void static link_tabs();
+void display_procs(process_t **procs);
+void refresh();
 
 /* Global Variables */
 
@@ -67,6 +69,8 @@ void quit_app(GtkWidget *widget, gpointer data) {
 
 void toggle_process_view(GtkWidget *widget, gpointer data) {
   GtkCheckMenuItem *toggle = data;
+
+  refresh();
 
   /* Only change the other checks if toggle has been turned on */
 
@@ -173,6 +177,10 @@ void static link_view_buttons() {
   g_signal_connect(G_OBJECT(my_proc), "toggled", G_CALLBACK(toggle_process_view), my_proc);
   g_signal_connect(G_OBJECT(all_proc), "toggled", G_CALLBACK(toggle_process_view), all_proc);
   g_signal_connect(G_OBJECT(active_proc), "toggled", G_CALLBACK(toggle_process_view), active_proc);
+
+  GObject *refresh_butt = gtk_builder_get_object(builder, "view_refresh");
+  g_signal_connect(G_OBJECT(refresh_butt), "activate", G_CALLBACK(refresh), NULL);
+
 } /* link_view_buttons() */
 
 /*
@@ -304,6 +312,11 @@ GtkTreeView *proc_tree_view;
 GtkTreeModel *proc_model;
 gint pid_col = 3;
 
+void refresh() {
+  process_t **procs = create_pid_list();
+  display_procs(procs);
+}
+
 process_t *get_proc(int pid) {
   process_t **procs = create_pid_list();
 
@@ -381,6 +394,11 @@ void show_process_open_files(GtkMenuItem *item, gpointer user_data) {
   UNUSED(string);
 }
 
+gboolean hide(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+  gtk_widget_hide(widget);
+  return 1;
+}
+
 void show_process_details(GtkMenuItem *item, gpointer user_data) {
   mylog("Show Process Details");
   GtkTreeIter iter;
@@ -400,6 +418,7 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   GtkLabel *vmem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_virtual_mem"));
   GtkLabel *rmem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_resident_mem"));
   GtkLabel *smem = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_shared_mem"));
+  GtkLabel *cpu_perc = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu"));
   GtkLabel *cpu_time = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_cpu_time"));
   GtkLabel *time_start = GTK_LABEL(gtk_builder_get_object(builder, "detailed_proc_time_started"));
 
@@ -418,22 +437,28 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   char *smem_str = malloc(50);
   sprintf(smem_str, "%lf%c", proc->shared_mem, '\0');
 
+  char *cpu_perc_str = malloc(50);
+  sprintf(cpu_perc_str, "%d %%%c", proc->cpu_perc, '\0');
+
   char *cpu_time_str = malloc(50);
   sprintf(cpu_time_str, "%lf%c", proc->cpu_time, '\0');
 
+  char *time_start_str = malloc(50);
+  sprintf(time_start_str, "%lf%c", proc->time_started, '\0');
 
   gtk_label_set_text(name, proc->proc_name);
   gtk_label_set_text(id, pid_str);
-  //TODO Add user
+  gtk_label_set_text(user, proc->user);
   gtk_label_set_text(status, proc->state);
   gtk_label_set_text(mem, mem_str);
   gtk_label_set_text(vmem, vmem_str);
   gtk_label_set_text(rmem, rmem_str);
   gtk_label_set_text(smem, smem_str);
+  gtk_label_set_text(cpu_perc, cpu_perc_str);
   gtk_label_set_text(cpu_time, cpu_time_str);
-  //TODO Add time_start
+  gtk_label_set_text(time_start, time_start_str);
 
-  g_signal_connect(G_OBJECT(details), "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+  g_signal_connect(G_OBJECT(details), "delete-event", G_CALLBACK(hide), NULL);
   gtk_widget_show(details);
 
   UNUSED(name);
@@ -597,10 +622,28 @@ void display_procs(process_t **procs) {
 
   /* Add processes to tree view */
 
+  gboolean all = gtk_check_menu_item_get_active(all_proc);
+  gboolean my = gtk_check_menu_item_get_active(my_proc);
+  gboolean act = gtk_check_menu_item_get_active(active_proc);
+
+   all = all || my || act ? all : TRUE;
+
   int counter = 0;
   process_t *curr_proc = procs[counter];
   while (curr_proc != NULL) {
-    add_row_to_processes(list_store, &iter, curr_proc);
+    if (all) {
+      add_row_to_processes(list_store, &iter, curr_proc);
+    }
+    else if (my) {
+      if (curr_proc->owned) {
+        add_row_to_processes(list_store, &iter, curr_proc);
+      }
+    }
+    else if (act) {
+      if (*curr_proc->state == 'R') {
+        add_row_to_processes(list_store, &iter, curr_proc);
+      }
+    }
     curr_proc = procs[++counter];
   }
 } /* display_processes() */
