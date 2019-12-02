@@ -646,17 +646,17 @@ void static add_row_to_processes(GtkListStore *list_store,
   char *cpu_perc_str = malloc(50);
   sprintf(cpu_perc_str, "%d%c", proc->cpu_perc, '\0');
   g_value_set_static_string(&cpu, cpu_perc_str);
-  free(cpu_perc_str);
+  //free(cpu_perc_str);
 
   char *pid_str = malloc(50);
   sprintf(pid_str, "%d%c", proc->pid, '\0');
   g_value_set_static_string(&pid, pid_str);
-  free(pid_str);
+  //free(pid_str);
 
   char *mem_str = malloc(50);
   sprintf(mem_str, "%.0f Bytes%c", proc->memory, '\0');
   g_value_set_static_string(&mem, mem_str);
-  free(mem_str);
+  //free(mem_str);
 
   GValue vals[] = {name, status, cpu, pid, mem};
 
