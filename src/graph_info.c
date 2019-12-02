@@ -1,4 +1,3 @@
-
 /* Includes vvv */
 
 #include <stdlib.h>
@@ -23,22 +22,19 @@
 /* Defines ^^^ */
 
 
-/* Global Variables vvv */
-
-
 
 /* Struct Fill Functions */
 
+/* Function that fills a struct that gives system CPU usage info */
 
 cpu_hist *get_cur_cpu() {
   cpu_hist *cur = NULL;
 
-  // ... Fill
-  // cur->cpu_num = get_cpu_num();
-
+  cur->cpu_num = get_cpu_num();
+  cur->cpu_use_perc = get_cpu_usage();
 
   return cur;
-}
+} /* get_cur_cpu() */
 
 
 /* Function returns current memory and swap status in a struct */
@@ -52,8 +48,10 @@ ms_hist *get_memswap() {
   cur->swap_total = get_swap_total();
 
   return cur;
-}
+} /* get_memswap() */
 
+
+/* Function returns current network usage in a struct */
 
 net_hist *get_net() {
   net_hist *cur = malloc(sizeof(net_hist));
@@ -64,7 +62,7 @@ net_hist *get_net() {
   cur->total_sent = get_total_sent();
 
   return cur;
-}
+} /* get_net() */
 
 
 /*
@@ -75,17 +73,68 @@ net_hist *get_net() {
  */
 
 
+/* Function returns the total amount of cpus on the current system */
+
 int get_cpu_num() {
   return get_nprocs_conf();
-}
-
-double *get_cpu_use_list() {
-  double * temp = NULL;
-
-  return temp;
-}
+} /* get_cpu_num() */
 
 
+/* Function returns the current percentage of the CPU being used */
+
+double get_cpu_usage() {
+  double perc = 0;
+
+  FILE *fp = fopen("/proc/stat", "r");
+
+  if (fp == NULL) {
+    perror("get_cpu_usage() could not find proc file");
+    return -1;
+  }
+  double used_start = 0;
+  double temp_x = 0;
+  double temp_y = 0;
+  double idle_start = 0;
+
+  fscanf(fp, "%*s %lf %lf %lf %lf", &used_start, &temp_x, &temp_y, &idle_start);
+
+  used_start += (temp_x + temp_y);
+  temp_x = 0;
+  temp_y = 0;
+
+  fclose(fp);
+  fp = NULL;
+
+  usleep(900);
+
+  fp = fopen("/proc/stat", "r");
+
+  if (fp == NULL) {
+    perror("get_cpu_usage() could not find proc file");
+    return -1;
+  }
+
+  double used_end = 0;
+  double idle_end = 0;
+
+  fscanf(fp, "%*s %lf %lf %lf %lf", &used_end, &temp_x, &temp_y, &idle_end);
+
+  used_end += (temp_x + temp_y);
+
+  fclose(fp);
+  fp = NULL;
+
+
+  double used_elapsed = used_end - used_start;
+  double idle_elapsed = idle_end - idle_start;
+
+  perc = (used_elapsed / idle_elapsed);
+
+  return perc;
+} /* get_cpu_usage() */
+
+
+/* Function returns the current amount of memory being used on the system */
 
 double get_graph_info_mem_use() {
   struct sysinfo mem;
@@ -96,29 +145,47 @@ double get_graph_info_mem_use() {
   double total = mem.totalram;
   double free = mem.freeram;
   return total - free;
-}
+} /* get_graph_info_mem_use() */
+
+
+/* Function returns the total amount of memory in the system */
 
 double get_graph_info_mem_total() {
   struct sysinfo mem;
-  sysinfo(&mem);
+  if (sysinfo(&mem) == -1) {
+    perror("get_graph_info_mem_total() sysinfo returned an error");
+    return -1;
+  }
   double total = mem.totalram;
   return total;
-}
+} /* get_graph_info_mem_total() */
+
+
+/* Function returns the current amount of swap space being used */
 
 double get_swap_use() {
   struct sysinfo mem;
-  sysinfo(&mem);
+  if (sysinfo(&mem) == -1) {
+    perror("get_swap_use() sysinfo returned an error");
+    return -1;
+  }
   double total = mem.totalswap;
   double free = mem.freeswap;
   return total - free;
-}
+} /* get_swap_use() */
+
+
+/* Function returns the total amount of swap space */
 
 double get_swap_total() {
   struct sysinfo mem;
-  sysinfo(&mem);
+  if (sysinfo(&mem) == -1) {
+    perror("get_swap_total() sysinfo returned an error");
+    return -1;
+  }
   double total = mem.totalswap;
   return total;
-}
+} /* get_swap_total() */
 
 
 
@@ -148,11 +215,12 @@ double recieve_help() {
   }
 
   free(test);
+  test = NULL;
   fclose(fp);
   fp = NULL;
 
   return rec;
-}
+} /* recieve_help() */
 
 
 /* Returns the current bytes being recieved per second */
@@ -162,14 +230,14 @@ double get_recieving() {
   usleep(800);
   double recieved_end = recieve_help();
   return recieved_end - recieved_start;
-}
+} /* get_recieving() */
 
 
 /* Returns the total recieved bytes on the network at the current moment */
 
 double get_total_recieved() {
   return recieve_help();
-}
+} /* get_total_recieved() */
 
 
 /* Driver function to get total sent bytes at a certain moment */
@@ -200,22 +268,28 @@ double send_help() {
   }
 
   free(test);
+  test = NULL;
   fclose(fp);
   fp = NULL;
 
   return rec;
-}
+} /* send_help() */
 
+
+/* Function returns current amount of bytes being sent on a network */
 
 double get_sending() {
   double send_start = send_help();
   usleep(800);
   double send_end = send_help();
   return send_end - send_start;
-}
+} /* get_sending() */
+
+
+/* Function returns the total amount of bytes sent on a network */
 
 double get_total_sent() {
   return send_help();
-}
+} /* get_total_sent() */
 
 

@@ -149,8 +149,6 @@ void fill_info(sys_info *fill) {
   fill->mem_total = get_mem_total();
   fill->CPU_info = get_CPU_info();
   fill->disk_storage = get_disk_storage();
-}
-
-
+} /* fill_info() */
 
 
