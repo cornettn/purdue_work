@@ -28,7 +28,7 @@
 /* Creates and fills a mount list for the cur sys, returns mount list on succes, NULL on error. */
 
 mount **get_mount_list() {
-  
+
   int mount_count = get_mount_num();
   mount **list = malloc(sizeof(mount*) * mount_count);
 
@@ -39,18 +39,16 @@ mount **get_mount_list() {
 
   for (int x = 0; x < mount_count; x++) {
     mnt = getmntent(fp);
-    if (mnt == NULL) {
-      break;
+    if (mnt != NULL) {
+      list[x] = malloc(sizeof(mount));
+      list[x]->dev_name = get_dev_name(mnt);
+      list[x]->dev_dir = get_dev_dir(mnt);
+      list[x]->dev_type = get_dev_type(mnt);
+      list[x]->dev_total_space = get_dev_total_space(mnt);
+      list[x]->dev_free_space = get_dev_free_space(mnt);
+      list[x]->dev_avail_space = get_dev_avail_space(mnt);
+      list[x]->dev_used_space = get_dev_used_space(mnt);
     }
-    list[x] = malloc(sizeof(mount));
-    list[x]->dev_name = get_dev_name(mnt);
-    list[x]->dev_dir = get_dev_dir(mnt);
-    list[x]->dev_type = get_dev_type(mnt);
-    list[x]->dev_total_space = get_dev_total_space(mnt);
-    list[x]->dev_free_space = get_dev_free_space(mnt);
-    list[x]->dev_avail_space = get_dev_avail_space(mnt);
-    list[x]->dev_used_space = get_dev_used_space(mnt);
-    
   }
 
   return list;
@@ -62,7 +60,7 @@ mount **get_mount_list() {
 int get_mount_num() {
   FILE *fp;
   struct mntent * mnt;
-  
+
   fp = setmntent(_PATH_MOUNTED, "r");
   if (fp == NULL) {
     perror("get_mount_num() could not read file");
