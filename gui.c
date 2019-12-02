@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-//`#include <glg_cairo.h>
 #include <cairo.h>
 
 #include "logger.h"
@@ -12,7 +11,6 @@
 #include "pid_parser.h"
 #include "graph_info.h"
 #include "file_system.h"
-//#include "slope/slope.h"
 
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
@@ -174,12 +172,16 @@ void static link_edit_buttons() {
  */
 
 void static link_view_buttons() {
-  g_signal_connect(G_OBJECT(my_proc), "toggled", G_CALLBACK(toggle_process_view), my_proc);
-  g_signal_connect(G_OBJECT(all_proc), "toggled", G_CALLBACK(toggle_process_view), all_proc);
-  g_signal_connect(G_OBJECT(active_proc), "toggled", G_CALLBACK(toggle_process_view), active_proc);
+  g_signal_connect(G_OBJECT(my_proc), "toggled",
+      G_CALLBACK(toggle_process_view), my_proc);
+  g_signal_connect(G_OBJECT(all_proc), "toggled",
+      G_CALLBACK(toggle_process_view), all_proc);
+  g_signal_connect(G_OBJECT(active_proc), "toggled",
+      G_CALLBACK(toggle_process_view), active_proc);
 
   GObject *refresh_butt = gtk_builder_get_object(builder, "view_refresh");
-  g_signal_connect(G_OBJECT(refresh_butt), "activate", G_CALLBACK(refresh), NULL);
+  g_signal_connect(G_OBJECT(refresh_butt), "activate",
+      G_CALLBACK(refresh), NULL);
 
 } /* link_view_buttons() */
 
@@ -209,7 +211,8 @@ void static link_help_buttons() {
  * selected.
  */
 
-void process_view_visibility(GtkNotebook *widget, GtkWidget *page, guint page_num,
+void process_view_visibility(GtkNotebook *widget,
+                             GtkWidget *page, guint page_num,
                              gpointer data) {
 
   /* Grey out the process views if not on process page */
@@ -278,12 +281,18 @@ void static init_system_tab() {
 
   /* Retrieve labels from builder */
 
-  GObject *os_type = gtk_builder_get_object(builder, "os_type_label");
-  GObject *os_verison = gtk_builder_get_object(builder, "os_release_version_label");
-  GObject *kernel_version = gtk_builder_get_object(builder, "kernel_version_label");
-  GObject *mem_amount = gtk_builder_get_object(builder, "memory_label");
-  GObject *proc_type = gtk_builder_get_object(builder, "processor_type_label");
-  GObject *disk_space = gtk_builder_get_object(builder, "disk_space_label");
+  GObject *os_type = gtk_builder_get_object(builder,
+      "os_type_label");
+  GObject *os_verison = gtk_builder_get_object(builder,
+      "os_release_version_label");
+  GObject *kernel_version = gtk_builder_get_object(builder,
+      "kernel_version_label");
+  GObject *mem_amount = gtk_builder_get_object(builder,
+      "memory_label");
+  GObject *proc_type = gtk_builder_get_object(builder,
+      "processor_type_label");
+  GObject *disk_space = gtk_builder_get_object(builder,
+      "disk_space_label");
 
   /* Set labels to correct text */
 
@@ -523,7 +532,8 @@ void show_process_details(GtkMenuItem *item, gpointer user_data) {
   gtk_label_set_text(cpu_time, cpu_time_str);
   gtk_label_set_text(time_start, time_start_str);
 
-  g_signal_connect(G_OBJECT(details), "delete-event", G_CALLBACK(hide), NULL);
+  g_signal_connect(G_OBJECT(details), "delete-event",
+      G_CALLBACK(hide), NULL);
   gtk_widget_show(details);
 
   free(pid_str);
@@ -557,8 +567,9 @@ void show_process_options(GtkTreeView *tree_view,
 void mouse_click(GtkWidget *widget,
                    GdkEvent *event,
                    gpointer user_data) {
-  if (((GdkEventAny *) event)->window == gtk_tree_view_get_bin_window(GTK_TREE_VIEW(widget)) &&
-      event->type == GDK_BUTTON_PRESS) {
+  if ((((GdkEventAny *) event)->window ==
+        gtk_tree_view_get_bin_window(GTK_TREE_VIEW(widget))) &&
+      (event->type == GDK_BUTTON_PRESS)) {
     if (((GdkEventButton *) event)->button == RIGHT_CLICK) {
 
       mylog("Right Click on Process tree view");
@@ -568,13 +579,15 @@ void mouse_click(GtkWidget *widget,
       gint x = (gint) ((GdkEventButton *) event)->x;
       gint y = (gint) ((GdkEventButton *) event)->y;
 
-      gboolean row_present = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
+      gboolean row_present =
+        gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
                                   x, y, &row_activated, NULL, NULL, NULL);
 
       /* Activate the row if it is present */
 
       if (row_present) {
-        gtk_tree_view_row_activated(GTK_TREE_VIEW(widget), row_activated, NULL);
+        gtk_tree_view_row_activated(GTK_TREE_VIEW(widget),
+            row_activated, NULL);
       }
     }
   }
@@ -585,10 +598,12 @@ void mouse_click(GtkWidget *widget,
       gint x = (gint) ((GdkEventButton *) event)->x;
       gint y = (gint) ((GdkEventButton *) event)->y;
 
-      gboolean row_present = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
+      gboolean row_present =
+        gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(widget),
                               x, y, &row_activated, NULL, NULL, NULL);
       if (row_present) {
-        GObject *details_menu_item = gtk_builder_get_object(builder, "proc_detailed_view");
+        GObject *details_menu_item =
+          gtk_builder_get_object(builder, "proc_detailed_view");
         show_process_details(GTK_MENU_ITEM(details_menu_item), NULL);
       }
     }
@@ -628,20 +643,20 @@ void static add_row_to_processes(GtkListStore *list_store,
   g_value_set_static_string(&name, proc->proc_name);
   g_value_set_static_string(&status, proc->state);
 
-  char *buf2 = malloc(50);
-  sprintf(buf2, "%d%c", proc->cpu_perc, '\0');
+  char *cpu_perc_str = malloc(50);
+  sprintf(cpu_perc_str, "%d%c", proc->cpu_perc, '\0');
+  g_value_set_static_string(&cpu, cpu_perc_str);
+  free(cpu_perc_str);
 
-  g_value_set_static_string(&cpu, buf2);
+  char *pid_str = malloc(50);
+  sprintf(pid_str, "%d%c", proc->pid, '\0');
+  g_value_set_static_string(&pid, pid_str);
+  free(pid_str);
 
-  char *buf = malloc(50);
-  sprintf(buf, "%d%c", proc->pid, '\0');
-
-  g_value_set_static_string(&pid, buf);
-
-  char *buf1 = malloc(50);
-  sprintf(buf1, "%.0f Bytes%c", proc->memory, '\0');
-
-  g_value_set_static_string(&mem, buf1);
+  char *mem_str = malloc(50);
+  sprintf(mem_str, "%.0f Bytes%c", proc->memory, '\0');
+  g_value_set_static_string(&mem, mem_str);
+  free(mem_str);
 
   GValue vals[] = {name, status, cpu, pid, mem};
 
@@ -660,7 +675,8 @@ void display_procs(process_t **procs) {
 
   /* Get references for tree view */
 
-  GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
+  GObject *tree_view = gtk_builder_get_object(builder,
+      "processes_tree_view");
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
   proc_model = model;
 
@@ -674,7 +690,8 @@ void display_procs(process_t **procs) {
   gtk_tree_model_get_iter(model, &iter, tree_path);
 
   GtkListStore *list_store =
-    GTK_LIST_STORE(gtk_builder_get_object(builder, "processes_list_store"));
+    GTK_LIST_STORE(gtk_builder_get_object(builder,
+          "processes_list_store"));
 
   /* Add processes to tree view */
 
@@ -723,14 +740,21 @@ void static init_process_view() {
 
   /* Get all the objects that need signal linking */
 
-  GObject *tree_view = gtk_builder_get_object(builder, "processes_tree_view");
+  GObject *tree_view = gtk_builder_get_object(builder,
+      "processes_tree_view");
   proc_tree_view = GTK_TREE_VIEW(tree_view);
-  GObject *stop_menu_item = gtk_builder_get_object(builder, "proc_stop");
-  GObject *continue_menu_item = gtk_builder_get_object(builder, "proc_continue");
-  GObject *kill_menu_item = gtk_builder_get_object(builder, "proc_kill");
-  GObject *mem_maps_menu_item = gtk_builder_get_object(builder, "proc_mem_maps");
-  GObject *open_files_menu_item = gtk_builder_get_object(builder, "proc_open_files");
-  GObject *details_menu_item = gtk_builder_get_object(builder, "proc_detailed_view");
+  GObject *stop_menu_item = gtk_builder_get_object(builder,
+      "proc_stop");
+  GObject *continue_menu_item = gtk_builder_get_object(builder,
+      "proc_continue");
+  GObject *kill_menu_item = gtk_builder_get_object(builder,
+      "proc_kill");
+  GObject *mem_maps_menu_item = gtk_builder_get_object(builder,
+      "proc_mem_maps");
+  GObject *open_files_menu_item = gtk_builder_get_object(builder,
+      "proc_open_files");
+  GObject *details_menu_item = gtk_builder_get_object(builder,
+      "proc_detailed_view");
 
   /* Link signals to the appropiate function */
 
@@ -809,7 +833,8 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
   cairo_translate (cr, da.width / 2, da.height / 2);
   cairo_scale (cr, ZOOM_X, -ZOOM_Y);
 
-  /* Determine the data points to calculate (ie. those in the clipping zone */
+  /* Determine the data points to calculate (ie. those in the clipping
+   * zone */
 
   cairo_device_to_user_distance (cr, &dx, &dy);
   cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
@@ -872,7 +897,8 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   cairo_translate (cr, da.width / 2, da.height / 2);
   cairo_scale (cr, ZOOM_X, -ZOOM_Y);
 
-  /* Determine the data points to calculate (ie. those in the clipping zone */
+  /* Determine the data points to calculate (ie. those in the clipping
+   * zone */
 
   cairo_device_to_user_distance (cr, &dx, &dy);
   cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
@@ -895,15 +921,21 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   ms_hist *data = get_memswap();
 
   char *mem_str = malloc(100);
-  sprintf(mem_str, "%.2f GB of %.2f GB", (data->mem_use / pow(1024, 3)), (data->mem_total / pow(1024, 3)));
+  sprintf(mem_str, "%.2f GB of %.2f GB",
+      (data->mem_use / pow(1024, 3)),
+      (data->mem_total / pow(1024, 3)));
 
   char *swap_str = malloc(100);
-  sprintf(swap_str, "%.2f GB of %.2f GB", (data->swap_use / pow(1024, 3)), (data->swap_total / pow(1024, 3)));
+  sprintf(swap_str, "%.2f GB of %.2f GB",
+      (data->swap_use / pow(1024, 3)),
+      (data->swap_total / pow(1024, 3)));
 
-  GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder, "mem_swap_mem"));
+  GtkLabel *mem = GTK_LABEL(gtk_builder_get_object(builder,
+        "mem_swap_mem"));
   gtk_label_set_text(mem, mem_str);
 
-  GtkLabel *swp = GTK_LABEL(gtk_builder_get_object(builder, "mem_swap_swap"));
+  GtkLabel *swp = GTK_LABEL(gtk_builder_get_object(builder,
+        "mem_swap_swap"));
   gtk_label_set_text(swp, swap_str);
 
   for (i = clip_x1; i < clip_x2; i += dx)
@@ -952,7 +984,8 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
   cairo_translate (cr, da.width / 2, da.height / 2);
   cairo_scale (cr, ZOOM_X, -ZOOM_Y);
 
-  /* Determine the data points to calculate (ie. those in the clipping zone */
+  /* Determine the data points to calculate (ie. those in the clipping
+   * zone */
 
   cairo_device_to_user_distance (cr, &dx, &dy);
   cairo_clip_extents (cr, &clip_x1, &clip_y1, &clip_x2, &clip_y2);
@@ -987,13 +1020,15 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
   GtkLabel *send = GTK_LABEL(gtk_builder_get_object(builder, "send"));
   gtk_label_set_text(send, send_str);
 
-  GtkLabel *send_tot = GTK_LABEL(gtk_builder_get_object(builder, "send_tot"));
+  GtkLabel *send_tot = GTK_LABEL(gtk_builder_get_object(builder,
+        "send_tot"));
   gtk_label_set_text(send_tot, send_tot_str);
 
   GtkLabel *rec = GTK_LABEL(gtk_builder_get_object(builder, "rec"));
   gtk_label_set_text(rec, rec_str);
 
-  GtkLabel *rec_tot = GTK_LABEL(gtk_builder_get_object(builder, "rec_tot"));
+  GtkLabel *rec_tot = GTK_LABEL(gtk_builder_get_object(builder,
+        "rec_tot"));
   gtk_label_set_text(rec_tot, rec_tot_str);
 
   /* Link each data point */
@@ -1021,13 +1056,19 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
  */
 
 void static init_resource_graphs() {
-  GObject *mem_swap_graph = gtk_builder_get_object(builder, "memory_and_swap_drawing_area");
-  GObject *cpu_graph = gtk_builder_get_object(builder, "cpu_usage_drawing_area");
-  GObject *net_graph = gtk_builder_get_object(builder, "network_history_drawing_area");
+  GObject *mem_swap_graph = gtk_builder_get_object(builder,
+      "memory_and_swap_drawing_area");
+  GObject *cpu_graph = gtk_builder_get_object(builder,
+      "cpu_usage_drawing_area");
+  GObject *net_graph = gtk_builder_get_object(builder,
+      "network_history_drawing_area");
 
-  g_signal_connect(G_OBJECT(mem_swap_graph), "draw", G_CALLBACK(draw_memory_swap), NULL);
-  g_signal_connect(G_OBJECT(cpu_graph), "draw", G_CALLBACK(draw_cpu), NULL);
-  g_signal_connect(G_OBJECT(net_graph), "draw", G_CALLBACK(draw_net), NULL);
+  g_signal_connect(G_OBJECT(mem_swap_graph), "draw",
+      G_CALLBACK(draw_memory_swap), NULL);
+  g_signal_connect(G_OBJECT(cpu_graph), "draw",
+      G_CALLBACK(draw_cpu), NULL);
+  g_signal_connect(G_OBJECT(net_graph), "draw",
+      G_CALLBACK(draw_net), NULL);
 } /* init_resource_graphs() */
 
 
@@ -1125,7 +1166,8 @@ void static init_file_systems() {
   gtk_tree_model_get_iter(model, &iter, tree_path);
 
   GtkListStore *list_store =
-    GTK_LIST_STORE(gtk_builder_get_object(builder, "file_system_list_store"));
+    GTK_LIST_STORE(gtk_builder_get_object(builder,
+          "file_system_list_store"));
 
   gtk_list_store_clear(list_store);
 
