@@ -512,7 +512,11 @@ void static add_row_to_processes(GtkListStore *list_store,
 
   g_value_set_static_string(&name, proc->proc_name);
   g_value_set_static_string(&status, proc->state);
-  g_value_set_static_string(&cpu, proc->cpu_time);
+
+  char *buf2 = malloc(50);
+  sprintf(buf2, "%lf%c", proc->cpu_time, '\0');
+
+  g_value_set_static_string(&cpu, buf2);
 
   char *buf = malloc(50);
   sprintf(buf, "%d%c", proc->pid, '\0');
