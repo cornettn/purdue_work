@@ -970,6 +970,9 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
         "mem_swap_swap"));
   gtk_label_set_text(swp, swap_str);
 
+
+  cairo_set_line_width(cr, 0.01);
+
   /* Draw mem curve */
   double mem_y_coord = map(data->mem_use, 0, data->mem_total, clip_y1, clip_y2);
   mem_data_points[mem_index++] = mem_y_coord;
