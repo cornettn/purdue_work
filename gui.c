@@ -808,6 +808,10 @@ double map(double val, double r1, double r2, double des_r1, double des_r2) {
 } /* map() */
 
 
+int cpu_index;
+double cpu_data_points[DRAW_NUM];
+
+
 /*
  * This function is used to draw the cpu history graph. This
  * function is called whenever the "draw" action is emitted by the drawing
@@ -865,22 +869,36 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
 
   cpu_hist *data = get_cur_cpu();
 
-  char *cpu_perc_str = malloc(100);
-  sprintf(cpu_perc_str, "%.2f %%", data->cpu_use_perc);
+  if (cpu_index % 60 == 0) {
+    char *cpu_perc_str = malloc(100);
+    sprintf(cpu_perc_str, "%.2f %%", data->cpu_use_perc);
 
-  GtkLabel *cpu_perc = GTK_LABEL(gtk_builder_get_object(builder,
+    GtkLabel *cpu_perc = GTK_LABEL(gtk_builder_get_object(builder,
         "cpu_perc_label"));
-  gtk_label_set_text(cpu_perc, cpu_perc_str);
+    gtk_label_set_text(cpu_perc, cpu_perc_str);
+  }
+
+  cairo_set_line_width(cr, 0.025);
 
   /* Link each data point */
 
-  for (i = clip_x1; i < clip_x2; i += dx)
-      cairo_line_to (cr, i, f (i));
+  if (data->cpu_use_perc >= 100.00) data->cpu_use_perc = 99.00;
+  double cpu_y_coord = map(data->cpu_use_perc, 0, 100, clip_y1, clip_y2);
+  cpu_data_points[cpu_index++] = cpu_y_coord;
+  if (cpu_index > DRAW_NUM -1) cpu_index = 0;
+  for (i = clip_x1; i < clip_x2; i += dx) {
+    int index = (int) map(i, clip_x1, clip_x2, 0, DRAW_NUM);
+    cairo_line_to (cr, i, cpu_data_points[index]);
+  }
 
 
   /* Draw the curve */
 
-  cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
+  //rgb(92, 53, 102)
+  cairo_set_source_rgba (cr,
+      map(92, 0, 255, 0, 1),
+      map(53, 0, 255, 0, 1),
+      map(102, 0, 255, 0, 1), 1);
   cairo_stroke (cr);
 
   return FALSE;
@@ -1134,10 +1152,12 @@ void static init_resource_graphs() {
   for (int i = 0; i < DRAW_NUM; i++) {
     send_data_points[i] = 0.0;
     rec_data_points[i] = 0.0;
+    cpu_data_points[i] = 0.0;
   }
 
   send_index = 0;
   rec_index = 0;
+  cpu_index = 0;
 
   GObject *mem_swap_graph = gtk_builder_get_object(builder,
       "memory_and_swap_drawing_area");
