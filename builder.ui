@@ -1045,7 +1045,7 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">100 %</property>
+                        <property name="label" translatable="yes">50.0 Kb/s</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1057,7 +1057,7 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes"> 80 %</property>
+                        <property name="label" translatable="yes">40.0 Kb/s</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1069,7 +1069,7 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes"> 60 %</property>
+                        <property name="label" translatable="yes">30.0 Kb/s</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1081,7 +1081,7 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes"> 40 %</property>
+                        <property name="label" translatable="yes">20.0 Kb/s</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1093,7 +1093,7 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes"> 20 %</property>
+                        <property name="label" translatable="yes">10.0 Kb/s</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1105,7 +1105,7 @@ For Each Process:
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">  0 %</property>
+                        <property name="label" translatable="yes">  0.0 Kb/s</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>

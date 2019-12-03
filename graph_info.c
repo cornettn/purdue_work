@@ -130,7 +130,7 @@ double get_cpu_usage() {
 
   perc = (used_elapsed / idle_elapsed);
 
-  return perc;
+  return perc * 100;
 } /* get_cpu_usage() */
 
 

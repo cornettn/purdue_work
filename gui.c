@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <unistd.h>
 #include <cairo.h>
 
 #include "logger.h"
@@ -14,6 +15,7 @@
 
 #define UNUSED(x) (void)(x)
 #define BUF_SIZE (1024)
+#define DRAW_NUM (500)
 #define PROCESS_PAGE_NUM (1)
 #define LEFT_CLICK (1)
 #define RIGHT_CLICK (3)
@@ -798,6 +800,15 @@ gfloat f (gfloat x) {
 }
 
 /*
+ * Map the number val that has range (r1, r2) to the range (des_r1, des_r2).
+ */
+
+double map(double val, double r1, double r2, double des_r1, double des_r2) {
+  return (val - r1) / (r2 - r1) * (des_r2 - des_r1) + des_r1;
+} /* map() */
+
+
+/*
  * This function is used to draw the cpu history graph. This
  * function is called whenever the "draw" action is emitted by the drawing
  * area.
@@ -861,7 +872,6 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
         "cpu_perc_label"));
   gtk_label_set_text(cpu_perc, cpu_perc_str);
 
-
   /* Link each data point */
 
   for (i = clip_x1; i < clip_x2; i += dx)
@@ -876,6 +886,11 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
   return FALSE;
 } /* draw_cpu() */
 
+
+/* global data point array for mem swap */
+
+
+
 /*
  * This function is used to draw the memory and swap history graph. This
  * function is called whenever the "draw" action is emitted by the drawing
@@ -884,6 +899,8 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
 
 gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
                              gpointer user_data) {
+
+  //sleep(1);
 
   GdkRectangle da;            /* GtkDrawingArea size */
   gdouble dx = 5.0, dy = 5.0; /* Pixels between each point */
@@ -925,7 +942,6 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   cairo_stroke (cr);
 
   /* Get data points */
-//  ms_hist *data = get_memswap();
 
   /* Link each data point */
 
@@ -949,20 +965,41 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
         "mem_swap_swap"));
   gtk_label_set_text(swp, swap_str);
 
+  /* Draw mem curve */
+
+  double mem_y_coord = map(data->mem_use, 0, data->mem_total, clip_y1, clip_y2);
   for (i = clip_x1; i < clip_x2; i += dx)
-      cairo_line_to (cr, i, f (i));
-
-//  UNUSED(data);
-
-  /* Draw the curve */
+      cairo_line_to (cr, i, mem_y_coord);
 
   // Memory color: rgb(32, 32, 74)
   // Swap color: rgb(78, 154, 6)
-  cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
+  cairo_set_source_rgba (cr,
+      map(32, 0, 255, 0, 1),
+      map(32, 0, 255, 0, 1),
+      map(74, 0, 255, 0, 1), 1);
+  cairo_stroke (cr);
+
+  /* Draw Swap Curve */
+
+  double swap_y_coord = map(data->swap_use, 0, data->swap_total, clip_y1, clip_y2);
+  for (i = clip_x1; i < clip_x2; i += dx)
+      cairo_line_to (cr, i, swap_y_coord);
+
+  cairo_set_source_rgba (cr,
+      map(78, 0, 255, 0, 1),
+      map(154, 0, 255, 0, 1),
+      map(6, 0, 255, 0, 1), 1);
   cairo_stroke (cr);
 
   return FALSE;
 } /* draw_memory_swap() */
+
+
+int send_index;
+int rec_index;
+//double *data_points = malloc(sizeof(double) * DRAW_NUM);
+double send_data_points[DRAW_NUM];
+double rec_data_points[DRAW_NUM];
 
 /*
  * This function is sued to draw the network history graph. This function
@@ -1015,49 +1052,76 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
 
   net_hist *data = get_net();
 
+  if (rec_index % 60 == 0) {
+    char *rec_str = malloc(100);
+    sprintf(rec_str, "%.2f KB/s ", (data->recieving / pow(1024, 1)));
 
-  char *rec_str = malloc(100);
-  sprintf(rec_str, "%.2f KB/s ", (data->recieving / pow(1024, 1)));
+    char *rec_tot_str = malloc(100);
+    sprintf(rec_tot_str, "%.2f GB ", (data->total_recieved / pow(1024, 3)));
 
-  char *rec_tot_str = malloc(100);
-  sprintf(rec_tot_str, "%.2f GB ", (data->total_recieved / pow(1024, 3)));
+    char *send_str = malloc(100);
+    sprintf(send_str, "%.2f KB/s ", (data->sending / pow(1024, 1)));
 
-  char *send_str = malloc(100);
-  sprintf(send_str, "%.2f KB/s ", (data->sending / pow(1024, 1)));
+    char *send_tot_str = malloc(100);
+    sprintf(send_tot_str, "%.2f GB ", (data->total_sent / pow(1024, 3)));
 
-  char *send_tot_str = malloc(100);
-  sprintf(send_tot_str, "%.2f GB ", (data->total_sent / pow(1024, 3)));
+    GtkLabel *send = GTK_LABEL(gtk_builder_get_object(builder, "send"));
+    gtk_label_set_text(send, send_str);
 
-  GtkLabel *send = GTK_LABEL(gtk_builder_get_object(builder, "send"));
-  gtk_label_set_text(send, send_str);
-
-  GtkLabel *send_tot = GTK_LABEL(gtk_builder_get_object(builder,
+    GtkLabel *send_tot = GTK_LABEL(gtk_builder_get_object(builder,
         "send_tot"));
-  gtk_label_set_text(send_tot, send_tot_str);
+    gtk_label_set_text(send_tot, send_tot_str);
 
-  GtkLabel *rec = GTK_LABEL(gtk_builder_get_object(builder, "rec"));
-  gtk_label_set_text(rec, rec_str);
+    GtkLabel *rec = GTK_LABEL(gtk_builder_get_object(builder, "rec"));
+    gtk_label_set_text(rec, rec_str);
 
-  GtkLabel *rec_tot = GTK_LABEL(gtk_builder_get_object(builder,
+    GtkLabel *rec_tot = GTK_LABEL(gtk_builder_get_object(builder,
         "rec_tot"));
-  gtk_label_set_text(rec_tot, rec_tot_str);
+    gtk_label_set_text(rec_tot, rec_tot_str);
 
+  }
   /* Link each data point */
 
-  for (i = clip_x1; i < clip_x2; i += dx)
-      cairo_line_to (cr, i, f (i));
+  cairo_set_line_width(cr, 0.01);
 
-  UNUSED(data);
 
-  /* Draw the curve */
+  /* Draw receving */
 
+  double rec_y_coord = map(data->recieving, 0, 50 * 1024, clip_y1, clip_y2);
+  rec_data_points[rec_index++] = rec_y_coord;
+  if (rec_index >= DRAW_NUM) rec_index = 0;
+  for (i = clip_x1; i < clip_x2; i += dx) {
+      int index = (int) map(i, clip_x1, clip_x2, 0, DRAW_NUM);
+      cairo_line_to (cr, i, rec_data_points[index]);
+  }
+
+  cairo_set_source_rgba (cr,
+      map(252, 0, 255, 0, 1),
+      map(175, 0, 255, 0, 1),
+      map(62, 0, 255, 0, 1), 1);
+  cairo_stroke (cr);
+
+
+  /* Draw sending */
+
+  double send_y_coord = map(data->sending, 0, 50 * 1024, clip_y1, clip_y2);
+  send_data_points[send_index++] = send_y_coord;
+  if (send_index >= DRAW_NUM) send_index = 0;
+  //int count = 0;
+  for (i = clip_x1; i < clip_x2; i += dx) {
+    int index = (int) map(i, clip_x1, clip_x2, 0, DRAW_NUM);
+    cairo_line_to (cr, i, send_data_points[index]);
+  }
+
+  cairo_set_source_rgba (cr,
+      map(138, 0, 255, 0, 1),
+      map(226, 0, 255, 0, 1),
+      map(52, 0, 255, 0, 1), 1);
+  cairo_stroke (cr);
   // Sending color: rgb(138, 226, 52)
   // Total sent color: rgb(78, 154, 6)
   // Receiving color: rgb(252, 175, 62)
   // Total received color: rgb(206, 92, 0)
-
-  cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.6);
-  cairo_stroke (cr);
 
   return FALSE;
 } /* draw_net() */
@@ -1067,6 +1131,14 @@ gboolean static draw_net(GtkWidget *widget, cairo_t *cr,
  */
 
 void static init_resource_graphs() {
+  for (int i = 0; i < DRAW_NUM; i++) {
+    send_data_points[i] = 0.0;
+    rec_data_points[i] = 0.0;
+  }
+
+  send_index = 0;
+  rec_index = 0;
+
   GObject *mem_swap_graph = gtk_builder_get_object(builder,
       "memory_and_swap_drawing_area");
   GObject *cpu_graph = gtk_builder_get_object(builder,
