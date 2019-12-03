@@ -880,10 +880,15 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
 
   cairo_set_line_width(cr, 0.025);
 
-  /* Link each data point */
 
+  /* Link each data point */
   if (data->cpu_use_perc >= 100.00) data->cpu_use_perc = 99.00;
   double cpu_y_coord = map(data->cpu_use_perc, 0, 100, clip_y1, clip_y2);
+
+  if (isnan(cpu_y_coord)) {
+    cpu_y_coord = clip_y1;
+  }
+
   cpu_data_points[cpu_index++] = cpu_y_coord;
   if (cpu_index > DRAW_NUM -1) cpu_index = 0;
   for (i = clip_x1; i < clip_x2; i += dx) {

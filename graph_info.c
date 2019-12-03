@@ -111,7 +111,7 @@ double get_cpu_usage() {
 
   if (fp == NULL) {
     perror("get_cpu_usage() could not find proc file");
-    return -1;
+    return 0;
   }
 
   double used_end = 0;
@@ -129,8 +129,13 @@ double get_cpu_usage() {
   double idle_elapsed = idle_end - idle_start;
 
   perc = (used_elapsed / idle_elapsed);
-
-  return perc * 100;
+  if (perc < 0 || perc > 100) {
+    perc = 0;
+  }
+  else {
+    perc *= 100;
+  }
+  return perc;
 } /* get_cpu_usage() */
 
 
