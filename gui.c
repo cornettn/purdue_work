@@ -377,6 +377,7 @@ void stop_process(GtkMenuItem *item, gpointer user_data) {
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   stop_proc(pid);
+  refresh();
 } /* stop_process() */
 
 /*
@@ -392,6 +393,7 @@ void continue_process(GtkMenuItem *item, gpointer user_data) {
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   cont_proc(pid);
+  refresh();
 } /* continue_process() */
 
 /*
@@ -407,6 +409,7 @@ void kill_process(GtkMenuItem *item, gpointer user_data) {
   gchar *string = (gchar *) g_value_get_string(&val);
   int pid = atoi(string);
   kill_proc(pid);
+  refresh();
 } /* kill_process() */
 
 
