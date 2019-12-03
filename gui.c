@@ -891,6 +891,11 @@ gboolean static draw_cpu(GtkWidget *widget, cairo_t *cr,
 
 
 
+int swap_index;
+int mem_index;
+double swap_data_points[DRAW_NUM];
+double mem_data_points[DRAW_NUM];
+
 /*
  * This function is used to draw the memory and swap history graph. This
  * function is called whenever the "draw" action is emitted by the drawing
@@ -966,10 +971,13 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   gtk_label_set_text(swp, swap_str);
 
   /* Draw mem curve */
-
   double mem_y_coord = map(data->mem_use, 0, data->mem_total, clip_y1, clip_y2);
-  for (i = clip_x1; i < clip_x2; i += dx)
-      cairo_line_to (cr, i, mem_y_coord);
+  mem_data_points[mem_index++] = mem_y_coord;
+  if (mem_index >= DRAW_NUM) mem_index = 0;
+  for (i = clip_x1; i < clip_x2; i += dx) {
+      int index = (int) map(i, clip_x1, clip_x2, 0, DRAW_NUM);
+      cairo_line_to (cr, i, mem_data_points[index]);
+  }
 
   // Memory color: rgb(32, 32, 74)
   // Swap color: rgb(78, 154, 6)
@@ -980,10 +988,13 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
   cairo_stroke (cr);
 
   /* Draw Swap Curve */
-
   double swap_y_coord = map(data->swap_use, 0, data->swap_total, clip_y1, clip_y2);
-  for (i = clip_x1; i < clip_x2; i += dx)
-      cairo_line_to (cr, i, swap_y_coord);
+  swap_data_points[swap_index++] = swap_y_coord;
+  if (swap_index >= DRAW_NUM) swap_index = 0;
+  for (i = clip_x1; i < clip_x2; i += dx) {
+      int index = (int) map(i, clip_x1, clip_x2, 0, DRAW_NUM);
+      cairo_line_to (cr, i, swap_data_points[index]);
+  }
 
   cairo_set_source_rgba (cr,
       map(78, 0, 255, 0, 1),
@@ -997,7 +1008,6 @@ gboolean static draw_memory_swap(GtkWidget *widget, cairo_t *cr,
 
 int send_index;
 int rec_index;
-//double *data_points = malloc(sizeof(double) * DRAW_NUM);
 double send_data_points[DRAW_NUM];
 double rec_data_points[DRAW_NUM];
 
