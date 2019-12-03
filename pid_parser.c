@@ -101,6 +101,9 @@ char *get_name(char* pid) {
 
   char * temp = malloc(sizeof(char) * SMALL_BUF);
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return NULL;
+  }
   fscanf(fp, "%*d (%s) ", temp);
   fclose(fp);
   fp = NULL;
@@ -124,6 +127,9 @@ char *get_state(char* pid) {
 
   char * temp = malloc(sizeof(char) * SMALL_BUF);
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return NULL;
+  }
   fscanf(fp, "%*d %*s %s ", temp);
   fclose(fp);
   fp = NULL;
@@ -169,6 +175,9 @@ char *get_user(char* pid) {
 
   int uid = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return NULL;
+  }
   fscanf(fp, "%*[^Uid:]Uid: %d ", &uid);
   fclose(fp);
   fp = NULL;
@@ -193,6 +202,9 @@ double get_mem(char* pid) {
   double rss = 0;
   double swap = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return 0;
+  }
   fscanf(fp, "%*s %lf %*s %*s %*s %lf", &rss, &swap);
   fclose(fp);
   fp = NULL;
@@ -214,6 +226,9 @@ double get_virt_mem(char* pid) {
 
   double virt = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return 0;
+  }
   fscanf(fp, "%lf ", &virt);
   fclose(fp);
   fp = NULL;
@@ -235,6 +250,9 @@ double get_res_mem(char* pid) {
 
   double res = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return 0;
+  }
   fscanf(fp, "%*s %lf ", &res);
   fclose(fp);
   fp = NULL;
@@ -256,6 +274,9 @@ double get_shared_mem(char* pid) {
 
   double shared = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return 0;
+  }
   fscanf(fp, "%*s %*s %lf ", &shared);
   fclose(fp);
   fp = NULL;
@@ -279,6 +300,9 @@ double get_cpu_time(char * pid) {
   double utime = 0;
   double stime = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return 0;
+  }
   fscanf(fp, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lf %lf ", &utime, &stime);
   fclose(fp);
   fp = NULL;
@@ -302,6 +326,9 @@ double get_time_started(char * pid) {
 
   double time = 0;
   FILE *fp = fopen(path, "r");
+  if (fp == NULL) {
+    return 0;
+  }
   fscanf(fp, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lf ", &time);
   fclose(fp);
   fp = NULL;
