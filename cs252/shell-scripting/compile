@@ -1,0 +1,45 @@
+#! /bin/bash
+
+# Make sure that there are no arguments passed
+if [[ -n "$1" ]]; then
+  echo "Usage: $(echo $0 | cut -d "/" -f 2)"
+	exit 1
+fi
+
+ls > tempfile:$$
+touch tempfile:$$
+
+src_list=$(grep "src.*\.c" tempfile:$$)
+input_list=$(grep "input.*\.data" tempfile:$$)
+
+
+# Iterate through all of the source files and compile them
+for file in $src_list; do
+	echo "C Program: ${file}"
+  gcc -Wall -std=c99 $file
+  if (( $?==0 )); then
+  	echo "Successfully compiled!"
+
+  	# Run the selected src file against all the input files
+  	for input_file in $input_list; do
+  		echo "Input file: ${input_file}"
+  		./a.out < ${input_file}
+  		if (( $?==0 )); then
+  			echo "Run Successful."
+  		else
+  			echo "Run failed on ${input_file}."
+  		fi
+  	done
+  else
+  	echo "Compilation of ${file} failed!"
+  fi
+  echo
+done
+
+# Making sure that a.out exists
+touch a.out
+
+# Clean up
+rm -f tempfile:$$
+rm -f a.out
+exit 0

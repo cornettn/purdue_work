@@ -1,0 +1,50 @@
+#! /bin/bash
+
+# Makes sure that there is correct usage
+if [[ -n "$1" ]]; then
+  echo "Usage: $(echo $0 | cut -d "/" -f 2)"
+	exit 1
+fi
+
+
+touch tempfile:$$
+ypcat passwd > tempfile:$$
+
+file=tempfile:$$
+
+touch users:$$
+cat $file | cut -d ":" -f 1 > users:$$
+
+echo "Welcome to User Finder!"
+echo -n "Please enter part or all of a username to search for: "
+read username
+
+matches=$(grep "${username}" users:$$)
+numOfMatches=$(grep "${username}" users:$$ | wc -l)
+username=$(grep "${username}" $file | head -n 1 | cut -d ":" -f 1)
+name=$(grep "${username}" $file | head -n 1 | cut -d ":" -f 5 | cut -d "," -f 1)
+homeDirectory=$(grep "${username}" $file | head -n 1 | cut -d ":" -f 6)
+shell=$(grep "${username}" $file | head -n 1 | cut -d ":" -f 7 | cut -d " " -f 1)
+
+# Clean Up temp file
+rm -f tempfile:$$
+rm -f users:$$
+
+if (( numOfMatches>1 )); then
+	echo "I found $(echo ${numOfMatches}) matches!"
+	echo "You might want to be more specific."
+	echo "The first of these matches is:"
+elif (( numOfMatches==0 )); then
+	echo "Sorry, I could not find that username."
+	exit 1
+else
+	echo "Match found!"
+fi
+
+echo "Username: ${username}"
+echo "Name: ${name}"
+echo "Home Directory: ${homeDirectory}"
+echo "Shell: ${shell}"
+echo "Search complete on $(date)"
+
+exit 0

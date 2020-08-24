@@ -1,0 +1,51 @@
+#! /bin/bash
+
+# Checking to see if the arguments are correct
+if [[ -z "$1" ]]; then
+	echo "Usage: $(echo $0 | cut -d "/" -f 2) <filename>"
+	exit 1
+elif [[ -n "$2" ]]; then
+	echo "Usage: $(echo $0 | cut -d "/" -f 2) <filename>"
+	exit 1
+fi
+
+# Checking to see if the argument passed is readable
+if [[ ! -r "$1" ]]; then
+	echo "Error: $1 is not readable!"
+	exit 2
+fi
+
+# Checking input
+
+numOfLines=$(cat $1 | wc -l)
+  
+
+for (( i = 1; i <= numOfLines; i++ )); do
+	line=$(cat $1 | head -n $i | tail -n 1)
+	field1=$(echo $line | cut -d "-" -f 1)
+	field2=$(echo $line | cut -d "-" -f 2)
+
+	# Checking field 1
+  field1Value=$(echo $field1 | awk '/((^0[1-9])|(^1[0-2])|(^[1-9]))\/(([1-9])|(0[1-9])|([1-2][0-9])|(3[0-1]))\/((19[0-9]{2})|(20[0-9]{2})|([0-9]{2}))$/' | wc -l)
+
+
+	# Checking field 2
+  field2Value=$(echo $field2 | awk '/^[A-Z][a-z]{1,}, [A-Z][a-z]{1,}( [A-Z]\.){0,1}$/' | wc -l)
+
+
+  if (( field1Value==1 && field2Value==1)); then
+    echo "Line $i is valid."
+  elif (( field1Value==0 && field2Value==1)); then
+    echo "Line $i has an invalid birth date."
+  elif (( field1Value==1 && field2Value==0)); then
+    echo "Line $i has an invalid name."
+  elif (( field1Value==0 && field2Value==0)); then
+    echo "Line $i has an invalid name and birth date."
+  fi
+
+
+done
+
+
+exit 0
+ 

@@ -1,0 +1,65 @@
+#! /bin/bash
+
+# Checking for correct arguments are passed
+usageMessage=$(echo "Usage: $(echo $0 | cut -d "/" -f 2) <matrix1> <matrix2>")
+
+if [[ -z "$1" ]]; then
+	echo ${usageMessage}
+	exit 1
+elif [[ -z "$2" ]]; then
+	echo ${usageMessage}
+	exit 1
+elif [[ -n "$3" ]]; then
+	echo ${usageMessage}
+	exit 1
+fi
+
+
+# Checking to see if arguments exits and are readable
+if [[ ! -r "$1" ]]; then
+	echo "Error: $1 is not readable!"
+	exit 1
+elif [[ ! -r "$2" ]]; then
+	echo "Error: $2 is not readable!"
+	exit 1
+fi
+
+
+# Checking to see if matrix dimensions are compatible
+matrixOneRowCount=$(cat "$1" | wc -l)
+matrixTwoRowCount=$(cat "$2" | wc -l)
+
+matrixOneColumnCount=$(cat "$1" | head -n 1 | wc -w)
+matrixTwoColumnCount=$(cat "$2" | head -n 1 | wc -w)
+
+if (( matrixOneColumnCount != matrixTwoRowCount )); then
+	echo "Error: incompatible matrix dimensions!"
+	exit 1
+fi
+
+
+# Multiply the matrices
+touch tempfile:$$
+
+for (( i=1; i<=matrixOneRowCount; i++)); do
+	row=$(cat "$1" | head -n $i | tail -n 1)
+	for (( j=1; j<=matrixTwoColumnCount; j++)); do
+		col=$(cat "$2" | tr -s ' ' | cut -d " " -f $j)
+
+		sum=0
+		for (( k=1; k<=matrixTwoColumnCount; k++)); do
+			value1=$(echo $row | cut -d " " -f $k)
+			value2=$(echo $col | cut -d " " -f $k)
+			((sum = sum + value1 * value2))
+		done
+
+		echo -n "${sum} " >> tempfile:$$
+	done
+	echo "" >> tempfile:$$
+done
+cat tempfile:$$
+
+
+# Clean up
+rm -f tempfile:$$
+exit 0

@@ -1,0 +1,38 @@
+#! /bin/bash
+
+# Checks to see if the first argument exists
+if [ -z "$1" ]; then
+  echo "Usage: $(echo $0 | cut -d "/" -f 2) <start> <limit>"
+  exit 1
+fi
+
+# Checks to see if the second  argument exists
+if [ -z "$2" ]; then
+  echo "Usage: $(echo $0 | cut -d "/" -f 2) <start> <limit>"
+  exit 1
+fi
+
+# Checks to make sure that is not a third argument
+if [ -n "$3" ]; then
+  echo "Usage: $(echo $0 | cut -d "/" -f 2) <start> <limit>"
+  exit 1
+fi
+
+first=$1
+second=$2
+counter=1
+
+echo -n "${first}"
+while (( ${counter} < ${second} ))
+do
+  if (( first%2==0 )); then
+    (( first=first/2 ))
+  else
+    (( first=first*3+1 ))
+  fi
+  echo -n " ${first}"
+  (( counter=counter+1 ))
+done
+echo
+exit 0
+
