@@ -1,0 +1,3 @@
+[submodule "cs381"]
+	path = cs381
+	url = https://github.com/cornettn/cs381.git
