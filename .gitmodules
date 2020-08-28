@@ -1,3 +1,6 @@
 [submodule "cs381"]
 	path = cs381
 	url = https://github.com/cornettn/cs381.git
+[submodule "cs252/my_malloc"]
+	path = cs252/my_malloc
+	url = https://github.com/cornettn/my_malloc.git
