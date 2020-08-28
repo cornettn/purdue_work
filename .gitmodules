@@ -4,3 +4,6 @@
 [submodule "cs252/my_malloc"]
 	path = cs252/my_malloc
 	url = https://github.com/cornettn/my_malloc.git
+[submodule "cs252/shell"]
+	path = cs252/shell
+	url = https://github.com/cornettn/shell.git
