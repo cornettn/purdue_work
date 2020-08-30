@@ -10,3 +10,6 @@
 [submodule "cs252/cs252-threads"]
 	path = cs252/cs252-threads
 	url = https://github.com/cornettn/cs252-threads.git
+[submodule "cs252/cs252-web-server"]
+	path = cs252/cs252-web-server
+	url = https://github.com/cornettn/cs252-web-server.git
