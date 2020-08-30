@@ -4,7 +4,7 @@ different folders for the different classes that I was a part of.
 
 ## Classes
 - cs252 -- Systems Programming
-- cs354 -- Operating Systems
+- cs354 -- Operating Systems (the repository marked `my_xinu`)
 
 ## Other CS classes without work shown
 - cs180 -- Object Oriented Programming in Java
