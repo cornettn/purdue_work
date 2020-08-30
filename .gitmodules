@@ -13,3 +13,6 @@
 [submodule "cs252/cs252-web-server"]
 	path = cs252/cs252-web-server
 	url = https://github.com/cornettn/cs252-web-server.git
+[submodule "cs252/cs252-task-manager"]
+	path = cs252/cs252-task-manager
+	url = https://github.com/cornettn/cs252-task-manager.git
