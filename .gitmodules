@@ -7,3 +7,6 @@
 [submodule "cs252/shell"]
 	path = cs252/shell
 	url = https://github.com/cornettn/shell.git
+[submodule "cs252/cs252-threads"]
+	path = cs252/cs252-threads
+	url = https://github.com/cornettn/cs252-threads.git
