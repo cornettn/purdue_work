@@ -16,3 +16,6 @@
 [submodule "cs252/cs252-task-manager"]
 	path = cs252/cs252-task-manager
 	url = https://github.com/cornettn/cs252-task-manager.git
+[submodule "my_xinu"]
+	path = my_xinu
+	url = https://github.com/cornettn/my_xinu.git
